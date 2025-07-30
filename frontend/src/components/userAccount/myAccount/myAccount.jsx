@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
+import { Routes, Route, Link, useLocation, Outlet } from 'react-router-dom';
 import { FaUser, FaHistory, FaShoppingBag, FaCreditCard, FaStar, FaQuestionCircle, FaSignOutAlt, FaCar } from 'react-icons/fa';
 import { MdOutlineEdit } from 'react-icons/md';
+import Profile from '../profile/profile';
+import ServiceHistory from '../serviceHistory/ServiceHistory';
+import PartsPurchase from '../partsPurchaseHistory/PartsPurchase'; 
+import PaymentHistory from '../paymentHistory/PaymentHistory';
+import SubmitReview from '../submitReview/SubmitReview';
+import FAQ from '../faq/FAQ';
 import './myAccount.css';
 
 const MyAccount = () => {
-  const [activeTab, setActiveTab] = useState('profile');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const location = useLocation();
 
   // Sample user data
   const userData = {
@@ -17,18 +24,22 @@ const MyAccount = () => {
   };
 
   const accountOptions = [
-    { id: 'profile', icon: <FaUser />, label: 'My Profile' },
-    { id: 'service', icon: <FaHistory />, label: 'Service History' },
-    { id: 'parts', icon: <FaShoppingBag />, label: 'Parts Purchase' },
-    { id: 'payment', icon: <FaCreditCard />, label: 'Payment History' },
-    { id: 'review', icon: <FaStar />, label: 'Submit Review' },
-    { id: 'faq', icon: <FaQuestionCircle />, label: 'FAQ' },
+    { id: 'profile', icon: <FaUser />, label: 'My Profile', path: '/account/profile' },
+    { id: 'service', icon: <FaHistory />, label: 'Service History', path: '/account/service-history' },
+    { id: 'parts', icon: <FaShoppingBag />, label: 'Parts Purchase', path: '/account/parts-purchase' },
+    { id: 'payment', icon: <FaCreditCard />, label: 'Payment History', path: '/account/payment-history' },
+    { id: 'review', icon: <FaStar />, label: 'Submit Review', path: '/account/submit-review' },
+    { id: 'faq', icon: <FaQuestionCircle />, label: 'FAQ', path: '/account/faq' },
   ];
 
   const handleLogout = () => {
     // Logout logic will be implemented later
     console.log('User logged out');
     setShowLogoutModal(false);
+  };
+
+  const isActive = (path) => {
+    return location.pathname === path;
   };
 
   return (
@@ -60,14 +71,14 @@ const MyAccount = () => {
         <div className="account-content">
           <div className="account-sidebar">
             {accountOptions.map((option) => (
-              <button
+              <Link
                 key={option.id}
-                className={`sidebar-option ${activeTab === option.id ? 'active' : ''}`}
-                onClick={() => setActiveTab(option.id)}
+                to={option.path}
+                className={`sidebar-option ${isActive(option.path) ? 'active' : ''}`}
               >
                 <span className="option-icon">{option.icon}</span>
                 <span className="option-label">{option.label}</span>
-              </button>
+              </Link>
             ))}
             
             <button 
@@ -80,13 +91,15 @@ const MyAccount = () => {
           </div>
 
           <div className="account-main">
-            <div className="tab-content">
-              <div className="welcome-message">
-                <FaCar className="welcome-icon" />
-                <h3>Welcome to Your AutoMotive Dashboard</h3>
-                <p>Select an option from the sidebar to manage your account and vehicle services</p>
-              </div>
-            </div>
+            <Routes>
+              <Route index element={<Profile userData={userData} />} />
+              <Route path="profile" element={<Profile userData={userData} />} />
+              <Route path="service-history" element={<ServiceHistory userData={userData} />} />
+              <Route path="parts-purchase" element={<PartsPurchase userData={userData} />} />
+              <Route path="payment-history" element={<PaymentHistory userData={userData} />} />
+              <Route path="submit-review" element={<SubmitReview userData={userData} />} />
+              <Route path="faq" element={<FAQ userData={userData} />} />
+            </Routes>
           </div>
         </div>
       </div>

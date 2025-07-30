@@ -1,0 +1,185 @@
+.submit-review-container {
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  .submit-review-container h2 {
+    display: flex;
+    align-items: center;
+    color: #333;
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+  
+  .submit-review-container h2 svg {
+    margin-right: 10px;
+    color: #ffc107;
+  }
+  
+  .review-form-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+  }
+  
+  .form-group {
+    margin-bottom: 25px;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #444;
+  }
+  
+  .toggle-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .toggle-btn {
+    flex: 1;
+    padding: 10px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 16px;
+  }
+  
+  .toggle-btn.active {
+    background: #ff5e14;
+    color: white;
+    border-color: #ff5e14;
+  }
+  
+  select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+  
+  select:focus, textarea:focus {
+    border-color: #ff5e14;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 94, 20, 0.2);
+  }
+  
+  .star-rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .star-rating input {
+    display: none;
+  }
+  
+  .star {
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+  
+  .submit-btn {
+    padding: 12px 25px;
+    background: #ff5e14;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+  }
+  
+  .submit-btn:hover {
+    background: #e04f0d;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .review-guidelines {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+  }
+  
+  .review-guidelines h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .review-guidelines ul {
+    padding-left: 20px;
+    margin: 0;
+  }
+  
+  .review-guidelines li {
+    margin-bottom: 10px;
+    color: #555;
+  }
+  
+  .success-message {
+    text-align: center;
+    padding: 40px 20px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .success-icon {
+    font-size: 60px;
+    color: #4CAF50;
+    margin-bottom: 20px;
+  }
+  
+  .success-message h2 {
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .success-message p {
+    color: #666;
+    margin-bottom: 25px;
+    font-size: 18px;
+  }
+  
+  .continue-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    background: #ff5e14;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .continue-btn:hover {
+    background: #e04f0d;
+  }
+  
+  @media (max-width: 768px) {
+    .review-form-container {
+      grid-template-columns: 1fr;
+    }
+    
+    .review-guidelines {
+      order: -1;
+    }
+  }

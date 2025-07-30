@@ -28,8 +28,7 @@ function App() {
           <Route path="/checkout" element={<Checkout/>} />
           <Route path="/about" element={<About/>} />
           <Route path="/contact" element={<ContactPage/>} />
-          <Route path="/account" element={<MyAccount/>} />
-          <Route path="/account/profile" element={<Profile />} />
+          <Route path="/account/*" element={<MyAccount />} />
 
         </Routes>
       </div>
