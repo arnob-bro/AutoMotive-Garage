@@ -1,0 +1,555 @@
+/* ServiceBookingManagement.css */
+
+/* Base Styles */
+.sbm-page-container {
+    min-height: 100vh;
+    background-color: #f5f7fa;
+    padding: 20px;
+    margin-top: 80px;
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .sbm-content-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    min-width: fit-content;
+  }
+  
+  .sbm-header {
+    margin-bottom: 30px;
+  }
+  
+  .sbm-title {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+  
+  .sbm-subtitle {
+    color: #7f8c8d;
+    font-size: 16px;
+  }
+  
+  /* Controls */
+  .sbm-controls {
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .sbm-tabs {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+  }
+  
+  .sbm-tab {
+    padding: 10px 20px;
+    border: none;
+    background: #f5f5f5;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .sbm-tab:hover {
+    background: #e0e0e0;
+  }
+  
+  .sbm-tab.active {
+    background: #ff5e14;
+    color: white;
+  }
+  
+  .sbm-search-filter {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .sbm-search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px 15px;
+    min-width: 300px;
+  }
+  
+  .sbm-search-icon {
+    color: #95a5a6;
+    margin-right: 10px;
+  }
+  
+  .sbm-search-input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+  }
+  
+  /* Bookings Table */
+  .sbm-bookings-table-container {
+    overflow-x: auto;
+    width: 100%;
+  }
+  
+  .sbm-bookings-table {
+    min-width: 1200px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .sbm-table-header {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+  }
+  
+  .sbm-table-row {
+    display: grid;
+    grid-template-columns: 120px 150px 150px 200px 180px 120px 120px 120px 150px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .sbm-table-col {
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+  
+  .sbm-col-id {
+    font-weight: 600;
+  }
+  
+  .sbm-col-actions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .sbm-booking-id {
+    background: #f1f8fe;
+    color: #1e88e5;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  
+  .sbm-vehicle-icon {
+    margin-right: 8px;
+    color: #7f8c8d;
+  }
+  
+  .sbm-date-time {
+    display: flex;
+    align-items: center;
+  }
+  
+  .sbm-date-icon {
+    margin-right: 8px;
+    color: #7f8c8d;
+  }
+  
+  /* Status Badges */
+  .sbm-status-badge {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    width: fit-content;
+  }
+  
+  .sbm-status-icon {
+    margin-right: 6px;
+    font-size: 14px;
+  }
+  
+  .sbm-completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  .sbm-in-progress {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+  
+  .sbm-confirmed {
+    background: #fff8e1;
+    color: #ff8f00;
+  }
+  
+  .sbm-pending {
+    background: #ffebee;
+    color: #c62828;
+  }
+  
+  .sbm-status-icon.sbm-in-progress {
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Payment Badges */
+  .sbm-payment-badge {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    width: fit-content;
+  }
+  
+  .sbm-payment-icon {
+    margin-right: 6px;
+    font-size: 14px;
+  }
+  
+  .sbm-paid {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  .sbm-pending {
+    background: #fff8e1;
+    color: #ff8f00;
+  }
+  
+  /* Action Buttons */
+  .sbm-action-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+  
+  .sbm-view-btn {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+  
+  .sbm-view-btn:hover {
+    background: #bbdefb;
+  }
+  
+  .sbm-assign-btn {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  .sbm-assign-btn:hover {
+    background: #c8e6c9;
+  }
+  
+  .sbm-assign-icon {
+    font-size: 14px;
+  }
+  
+  /* No Bookings */
+  .sbm-no-bookings {
+    grid-column: 1 / -1;
+    padding: 40px;
+    text-align: center;
+    color: #95a5a6;
+  }
+  
+  /* Modals */
+  .sbm-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .sbm-modal {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .sbm-details-modal {
+    max-width: 700px;
+  }
+  
+  .sbm-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .sbm-modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #2c3e50;
+  }
+  
+  .sbm-modal-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #95a5a6;
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+  .sbm-modal-close:hover {
+    color: #7f8c8d;
+  }
+  
+  .sbm-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .sbm-assign-info {
+    margin-bottom: 20px;
+  }
+  
+  .sbm-assign-info p {
+    margin: 8px 0;
+    font-size: 14px;
+  }
+  
+  .sbm-form-group {
+    margin-bottom: 20px;
+  }
+  
+  .sbm-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+  }
+  
+  .sbm-mechanic-select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .sbm-modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .sbm-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .sbm-cancel-btn {
+    background: #f5f5f5;
+    color: #333;
+  }
+  
+  .sbm-cancel-btn:hover {
+    background: #e0e0e0;
+  }
+  
+  .sbm-confirm-btn {
+    background: #4caf50;
+    color: white;
+  }
+  
+  .sbm-confirm-btn:hover {
+    background: #3d8b40;
+  }
+  
+  .sbm-start-btn {
+    background: #2196f3;
+    color: white;
+  }
+  
+  .sbm-start-btn:hover {
+    background: #0d8aee;
+  }
+  
+  .sbm-complete-btn {
+    background: #ff9800;
+    color: white;
+  }
+  
+  .sbm-complete-btn:hover {
+    background: #e68a00;
+  }
+  
+  .sbm-close-btn {
+    background: #f5f5f5;
+    color: #333;
+  }
+  
+  .sbm-close-btn:hover {
+    background: #e0e0e0;
+  }
+  
+  /* Details Grid */
+  .sbm-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+  .sbm-detail-item {
+    margin-bottom: 15px;
+  }
+  
+  .sbm-detail-label {
+    display: block;
+    font-weight: 500;
+    color: #7f8c8d;
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+  
+  .sbm-detail-value {
+    font-size: 14px;
+  }
+  
+  .sbm-detail-icon {
+    margin-right: 8px;
+    color: #7f8c8d;
+  }
+  
+  .sbm-services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .sbm-service-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .sbm-service-icon {
+    margin-right: 8px;
+    color: #7f8c8d;
+    font-size: 14px;
+  }
+  
+  .sbm-total-amount {
+    font-weight: 600;
+    font-size: 16px;
+    color: #2e7d32;
+  }
+  
+  /* Animations */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .sbm-content-container {
+      padding: 20px;
+    }
+    
+    .sbm-table-row {
+      grid-template-columns: 120px 150px 150px 180px 150px 120px 120px 120px 150px;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .sbm-tabs {
+      flex-wrap: wrap;
+    }
+    
+    .sbm-table-row {
+      grid-template-columns: 120px 150px 150px 150px 120px 120px 120px 150px;
+    }
+    
+    .sbm-col-payment {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .sbm-page-container {
+      padding: 15px;
+      margin-top: 70px;
+    }
+    
+    .sbm-table-row {
+      grid-template-columns: 100px 120px 120px 120px 100px 120px;
+    }
+    
+    .sbm-col-vehicle,
+    .sbm-col-mechanic {
+      display: none;
+    }
+    
+    .sbm-details-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .sbm-search-filter {
+      justify-content: flex-start;
+    }
+    
+    .sbm-search-box {
+      width: 100%;
+    }
+    
+    .sbm-table-row {
+      grid-template-columns: 100px 1fr 100px;
+    }
+    
+    .sbm-col-id,
+    .sbm-col-services,
+    .sbm-col-date,
+    .sbm-col-status {
+      display: none;
+    }
+    
+    .sbm-modal-footer {
+      flex-direction: column;
+    }
+    
+    .sbm-btn {
+      width: 100%;
+    }
+  }

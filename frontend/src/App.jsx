@@ -12,7 +12,16 @@ import About from './components/about/about';
 import ContactPage from './components/contactPage/contactPage';
 import MyAccount from './components/userAccount/myAccount/myAccount';
 import Profile from './components/userAccount/profile/profile';
-
+import AdminPage from './components/Admin/AdminPage/AdminPage';
+import Dashboard from './components/Admin/Dashboard/Dashboard';
+import AdminServices from './components/Admin/AdminServices/AdminServices';
+import ServiceBookingManagement from './components/Admin/ServiceBookingManagement/ServiceBookingManagement';
+import AdminPartsInventory from './components/Admin/AdminPartsInventory/AdminPartsInventory';
+import OrderManagement from './components/Admin/OrderManagement/OrderManagement';
+import AdminPaymentManagement from './components/Admin/AdminPaymentManagement/AdminPaymentManagement';
+import AdminEmployeeManagement from './components/Admin/AdminEmployeeManagement/AdminEmployeeManagement';
+import AdminUserManagement from './components/Admin/AdminUserManagement/AdminUserManagement';
+import NotificationPage from './components/NotificationPage/NotificationPage';
 
 function App() {
   return (
@@ -28,7 +37,20 @@ function App() {
           <Route path="/checkout" element={<Checkout/>} />
           <Route path="/about" element={<About/>} />
           <Route path="/contact" element={<ContactPage/>} />
+          <Route path="/notifications" element={<NotificationPage/>} />
           <Route path="/account/*" element={<MyAccount />} />
+          <Route path="/admin/*" element={<AdminPage />}>
+            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="admin-services" element={<AdminServices />} />
+            <Route path="bookings" element={<ServiceBookingManagement />} />
+            <Route path="admin-parts" element={<AdminPartsInventory />} />
+            <Route path="orders" element={<OrderManagement />} />
+            <Route path="admin-payments" element={<AdminPaymentManagement />} />
+            <Route path="employees" element={<AdminEmployeeManagement />} />
+            <Route path="users" element={<AdminUserManagement />} />
+          </Route>
+            
 
         </Routes>
       </div>

@@ -1,0 +1,694 @@
+/* AdminUserManagement.css */
+
+/* Base Styles */
+.aum-page-container {
+    min-height: 100vh;
+    background-color: #f5f7fa;
+    padding: 20px;
+    padding-top: 100px;
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .aum-content-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    min-width: fit-content;
+  }
+  
+  .aum-header {
+    margin-bottom: 30px;
+  }
+  
+  .aum-title {
+    font-size: 28px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+  }
+  
+  .aum-subtitle {
+    color: #7f8c8d;
+    font-size: 16px;
+  }
+  
+  /* Controls */
+  .aum-controls {
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .aum-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .aum-filter-group {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .aum-filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+  }
+  
+  .aum-filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .aum-filter-btn {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  
+  .aum-filter-btn:hover {
+    background: #f0f0f0;
+  }
+  
+  .aum-filter-btn.active {
+    background: #ff5e14;
+    color: white;
+    border-color: #ff5e14;
+  }
+  
+  .aum-search {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .aum-search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 8px 15px;
+    flex: 1;
+    max-width: 500px;
+  }
+  
+  .aum-search-icon {
+    color: #95a5a6;
+    margin-right: 10px;
+  }
+  
+  .aum-search-input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+  }
+  
+  /* Users Table */
+  .aum-users-table-container {
+    overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .aum-users-table {
+    min-width: 1200px;
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  
+  .aum-table-header {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  
+  .aum-table-row {
+    display: grid;
+    grid-template-columns: 120px minmax(180px, 1fr) 150px 120px minmax(200px, 1fr) 120px 120px 150px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .aum-table-col {
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    min-width: 0;
+  }
+  
+  .aum-col-id {
+    font-weight: 600;
+  }
+  
+  .aum-col-name {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    overflow: hidden;
+  }
+  
+  .aum-col-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  
+  .aum-user-id {
+    background: #f1f8fe;
+    color: #1e88e5;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    display: inline-block;
+  }
+  
+  .aum-user-name {
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+  
+  .aum-user-email {
+    color: #7f8c8d;
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+  
+  /* Role Badges */
+  .aum-role-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #f0f4f8;
+    font-size: 13px;
+    width: fit-content;
+    white-space: nowrap;
+  }
+  
+  .aum-role-icon {
+    color: #5a67d8;
+    flex-shrink: 0;
+  }
+  
+  /* Status Badges */
+  .aum-status-badge {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    width: fit-content;
+    gap: 6px;
+    white-space: nowrap;
+  }
+  
+  .aum-status-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  
+  .aum-active {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  .aum-on-hold {
+    background: #fff8e1;
+    color: #ff8f00;
+  }
+  
+  .aum-inactive {
+    background: #ffebee;
+    color: #c62828;
+  }
+  
+  /* Vehicles */
+  .aum-vehicles-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    overflow: hidden;
+  }
+  
+  .aum-vehicle-badge {
+    background: #e0f7fa;
+    color: #00838f;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  
+  .aum-no-vehicles {
+    color: #95a5a6;
+    font-size: 13px;
+  }
+  
+  /* Action Buttons */
+  .aum-action-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  
+  .aum-edit-btn {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+  
+  .aum-edit-btn:hover {
+    background: #bbdefb;
+  }
+  
+  .aum-delete-btn {
+    background: #ffebee;
+    color: #c62828;
+  }
+  
+  .aum-delete-btn:hover {
+    background: #ffcdd2;
+  }
+  
+  .aum-action-icon {
+    font-size: 14px;
+  }
+  
+  /* No Users */
+  .aum-no-users {
+    grid-column: 1 / -1;
+    padding: 40px;
+    text-align: center;
+    color: #95a5a6;
+  }
+  
+  /* Modals */
+  .aum-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(3px);
+  }
+  
+  .aum-modal {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .aum-delete-modal {
+    max-width: 500px;
+  }
+  
+  .aum-modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .aum-modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #2c3e50;
+  }
+  
+  .aum-modal-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #95a5a6;
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+  .aum-modal-close:hover {
+    color: #7f8c8d;
+  }
+  
+  .aum-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .aum-user-info {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .aum-user-info p {
+    margin: 5px 0;
+    font-size: 14px;
+  }
+  
+  .aum-form-group {
+    margin-bottom: 20px;
+  }
+  
+  .aum-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #2c3e50;
+  }
+  
+  .aum-form-group input,
+  .aum-form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .aum-user-to-delete {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+    margin: 15px 0;
+  }
+  
+  .aum-user-to-delete p {
+    margin: 8px 0;
+  }
+  
+  .aum-delete-warning {
+    color: #c62828;
+    font-weight: 500;
+  }
+  
+  .aum-modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .aum-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  
+  .aum-cancel-btn {
+    background: #f5f5f5;
+    color: #333;
+  }
+  
+  .aum-cancel-btn:hover {
+    background: #e0e0e0;
+  }
+  
+  .aum-confirm-btn {
+    background: #4caf50;
+    color: white;
+  }
+  
+  .aum-confirm-btn:hover {
+    background: #3d8b40;
+  }
+  
+  .aum-delete-confirm-btn {
+    background: #e74c3c;
+    color: white;
+  }
+  
+  .aum-delete-confirm-btn:hover {
+    background: #c0392b;
+  }
+  
+  /* Responsive */
+  @media (max-width: 1200px) {
+    .aum-content-container {
+      padding: 20px;
+    }
+    
+    .aum-table-row {
+      grid-template-columns: 120px minmax(180px, 1fr) 150px 120px minmax(180px, 1fr) 120px 150px;
+    }
+    
+    .aum-col-join-date {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 992px) {
+    .aum-filters {
+      flex-direction: column;
+    }
+    
+    .aum-filter-group {
+      min-width: 100%;
+    }
+    
+    .aum-table-row {
+      grid-template-columns: 120px minmax(180px, 1fr) 150px 120px minmax(150px, 1fr);
+    }
+    
+    .aum-col-vehicles {
+      display: none;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .aum-page-container {
+      padding: 15px;
+      padding-top: 90px;
+    }
+    
+    .aum-search {
+      justify-content: flex-start;
+    }
+    
+    .aum-search-box {
+      max-width: 100%;
+    }
+    
+    .aum-table-row {
+      grid-template-columns: 120px minmax(1fr, 200px) 150px;
+    }
+    
+    .aum-col-role,
+    .aum-col-status {
+      display: none;
+    }
+    
+    .aum-modal-footer {
+      flex-direction: column;
+    }
+    
+    .aum-btn {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .aum-modal {
+      width: 95%;
+    }
+    
+    .aum-table-row {
+      grid-template-columns: 1fr;
+      padding: 15px;
+    }
+    
+    .aum-table-col {
+      padding: 8px 0;
+      border-bottom: 1px dashed #eee;
+      width: 100%;
+    }
+    
+    .aum-col-actions {
+      justify-content: flex-end;
+      border-bottom: none;
+    }
+    
+    .aum-user-name,
+    .aum-user-email {
+      white-space: normal;
+    }
+  }
+
+
+  /* Activity Badges */
+.aum-activity-badge {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    width: fit-content;
+    white-space: nowrap;
+  }
+  
+  .aum-services-parts {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+  
+  .aum-services {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  
+  .aum-parts {
+    background: #fff8e1;
+    color: #ff8f00;
+  }
+  
+  .aum-no-activity {
+    background: #f5f5f5;
+    color: #616161;
+  }
+  
+  /* Details Modal */
+  .aum-details-modal {
+    max-width: 800px;
+  }
+  
+  .aum-details-header {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .aum-details-user h4 {
+    margin: 0 0 5px 0;
+    font-size: 20px;
+  }
+  
+  .aum-details-meta {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  
+  .aum-details-meta > * {
+    font-size: 13px;
+    color: #616161;
+  }
+  
+  .aum-details-section {
+    margin-bottom: 25px;
+  }
+  
+  .aum-details-section h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 15px 0;
+    font-size: 16px;
+  }
+  
+  .aum-details-icon {
+    color: #ff5e14;
+  }
+  
+  .aum-details-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .aum-details-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .aum-details-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .aum-details-table-header {
+    display: grid;
+    grid-template-columns: 120px 100px 1fr 80px 100px;
+    background: #f8f9fa;
+    font-weight: 600;
+    padding: 10px 15px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+  
+  .aum-details-table-row {
+    display: grid;
+    grid-template-columns: 120px 100px 1fr 80px 100px;
+    padding: 10px 15px;
+    border-bottom: 1px solid #f0f0f0;
+    align-items: center;
+  }
+  
+  .aum-details-table-col {
+    font-size: 14px;
+  }
+  
+  .aum-no-data {
+    color: #95a5a6;
+    font-style: italic;
+    padding: 10px 0;
+  }
+  
+  /* Details button */
+  .aum-details-btn {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+  
+  .aum-details-btn:hover {
+    background: #bbdefb;
+  }
