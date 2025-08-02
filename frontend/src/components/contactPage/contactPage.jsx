@@ -1,4 +1,13 @@
 import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faMapMarkerAlt, 
+  faPhoneAlt, 
+  faEnvelope, 
+  faClock,
+  faBuilding,
+  faHeadset
+} from '@fortawesome/free-solid-svg-icons';
 import './contactPage.css';
 
 const ContactPage = () => {
@@ -52,7 +61,7 @@ const ContactPage = () => {
           
           <div className="info-item">
             <div className="info-icon">
-              <i className="fas fa-map-marker-alt"></i>
+              <FontAwesomeIcon icon={faMapMarkerAlt} className="icon" />
             </div>
             <div className="info-content">
               <h3>Visit Us</h3>
@@ -63,7 +72,7 @@ const ContactPage = () => {
 
           <div className="info-item">
             <div className="info-icon">
-              <i className="fas fa-phone-alt"></i>
+              <FontAwesomeIcon icon={faPhoneAlt} className="icon" />
             </div>
             <div className="info-content">
               <h3>Call Us</h3>
@@ -74,7 +83,7 @@ const ContactPage = () => {
 
           <div className="info-item">
             <div className="info-icon">
-              <i className="fas fa-envelope"></i>
+              <FontAwesomeIcon icon={faEnvelope} className="icon" />
             </div>
             <div className="info-content">
               <h3>Email Us</h3>
@@ -85,7 +94,7 @@ const ContactPage = () => {
 
           <div className="info-item">
             <div className="info-icon">
-              <i className="fas fa-clock"></i>
+              <FontAwesomeIcon icon={faClock} className="icon" />
             </div>
             <div className="info-content">
               <h3>Working Hours</h3>

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { 
   FaCreditCard, FaFilter, FaCalendarAlt, 
   FaCheckCircle, FaTimesCircle, FaClock,
-  FaTools, FaShoppingBag, FaArrowRight
+  FaTools, FaShoppingBag, FaArrowRight,
+  FaFilePdf
 } from 'react-icons/fa';
 import './PaymentHistory.css';
 
@@ -14,60 +15,66 @@ const PaymentHistory = () => {
       date: '2023-08-20',
       type: 'service',
       description: 'Oil Change Service',
-      amount: 89.99,
+      amount: 8999,
       status: 'completed',
-      method: 'Credit Card (VISA ****4242)',
-      invoiceNumber: 'INV-2023-081'
+      method: 'SSL Commerz',
+      invoiceNumber: 'INV-2023-081',
+      deliveryAddress: 'House 12, Road 5, Gulshan-1, Dhaka 1212, Bangladesh'
     },
     {
       id: 2,
       date: '2023-08-15',
       type: 'parts',
       description: 'Premium Brake Pads (x2)',
-      amount: 119.98,
+      amount: 11998,
       status: 'completed',
-      method: 'PayPal',
-      invoiceNumber: 'INV-2023-072'
+      method: 'Cash on Delivery',
+      invoiceNumber: 'INV-2023-072',
+      deliveryAddress: 'House 34, Road 7, Dhanmondi, Dhaka 1209, Bangladesh'
     },
     {
       id: 3,
       date: '2023-07-28',
       type: 'service',
       description: 'Brake Inspection',
-      amount: 49.99,
+      amount: 4999,
       status: 'failed',
-      method: 'Credit Card (MC ****5555)',
-      invoiceNumber: 'INV-2023-063'
+      method: 'SSL Commerz',
+      invoiceNumber: 'INV-2023-063',
+      deliveryAddress: 'Plot 15, Block B, Bashundhara R/A, Dhaka 1229, Bangladesh'
     },
     {
       id: 4,
       date: '2023-07-10',
       type: 'parts',
       description: 'Performance Air Filter',
-      amount: 39.99,
+      amount: 3999,
       status: 'pending',
-      method: 'Bank Transfer',
-      invoiceNumber: 'INV-2023-054'
+      method: 'Cash on Delivery',
+      invoiceNumber: 'INV-2023-054',
+      deliveryAddress: 'House 5, Road 12, Uttara, Dhaka 1230, Bangladesh'
     },
     {
       id: 5,
       date: '2023-06-22',
       type: 'service',
       description: 'Tire Rotation',
-      amount: 39.99,
+      amount: 3999,
       status: 'completed',
-      method: 'Credit Card (VISA ****4242)',
-      invoiceNumber: 'INV-2023-045'
+      method: 'SSL Commerz',
+      invoiceNumber: 'INV-2023-045',
+      deliveryAddress: 'House 21, Road 3, Banani, Dhaka 1213, Bangladesh'
     },
     {
       id: 6,
       date: '2023-06-05',
       type: 'parts',
       description: 'Synthetic Motor Oil 5W-30 (x3)',
-      amount: 104.97,
+      amount: 10497,
       status: 'completed',
-      method: 'Apple Pay',
-      invoiceNumber: 'INV-2023-036'
+      method: 'Cash on Delivery',
+      invoiceNumber: 'INV-2023-036',
+      deliveryAddress: 'House 8, Road 14, Mirpur DOHS, Dhaka 1216, Bangladesh'
     }
   ];
 
@@ -88,11 +95,11 @@ const PaymentHistory = () => {
   const getStatusIcon = (status) => {
     switch(status) {
       case 'completed':
-        return <FaCheckCircle className="status-icon completed" />;
+        return <FaCheckCircle className="ph-status-icon ph-completed" />;
       case 'failed':
-        return <FaTimesCircle className="status-icon failed" />;
+        return <FaTimesCircle className="ph-status-icon ph-failed" />;
       case 'pending':
-        return <FaClock className="status-icon pending" />;
+        return <FaClock className="ph-status-icon ph-pending" />;
       default:
         return null;
     }
@@ -110,9 +117,9 @@ const PaymentHistory = () => {
   const getTypeIcon = (type) => {
     switch(type) {
       case 'service':
-        return <FaTools className="type-icon service" />;
+        return <FaTools className="ph-type-icon ph-service" />;
       case 'parts':
-        return <FaShoppingBag className="type-icon parts" />;
+        return <FaShoppingBag className="ph-type-icon ph-parts" />;
       default:
         return null;
     }
@@ -144,34 +151,39 @@ const PaymentHistory = () => {
     setShowReceiptModal(true);
   };
 
+  const handleDownloadPDF = () => {
+    // In a real app, this would generate/download a PDF
+    alert('PDF download functionality would be implemented here');
+  };
+
   return (
-    <div className="payment-history-container">
-      <div className="payment-history-header">
+    <div className="ph-container">
+      <div className="ph-header">
         <h2><FaCreditCard /> Payment History</h2>
-        <div className="filter-controls">
-          <div className="filter-group">
+        <div className="ph-filter-controls">
+          <div className="ph-filter-group">
             <label>Payment Status:</label>
-            <div className="filter-buttons">
+            <div className="ph-filter-buttons">
               <button 
-                className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
+                className={`ph-filter-btn ${filter === 'all' ? 'ph-active' : ''}`}
                 onClick={() => setFilter('all')}
               >
                 All ({statusCounts.all})
               </button>
               <button 
-                className={`filter-btn ${filter === 'completed' ? 'active' : ''}`}
+                className={`ph-filter-btn ${filter === 'completed' ? 'ph-active' : ''}`}
                 onClick={() => setFilter('completed')}
               >
                 Completed ({statusCounts.completed})
               </button>
               <button 
-                className={`filter-btn ${filter === 'failed' ? 'active' : ''}`}
+                className={`ph-filter-btn ${filter === 'failed' ? 'ph-active' : ''}`}
                 onClick={() => setFilter('failed')}
               >
                 Failed ({statusCounts.failed})
               </button>
               <button 
-                className={`filter-btn ${filter === 'pending' ? 'active' : ''}`}
+                className={`ph-filter-btn ${filter === 'pending' ? 'ph-active' : ''}`}
                 onClick={() => setFilter('pending')}
               >
                 Pending ({statusCounts.pending})
@@ -179,23 +191,23 @@ const PaymentHistory = () => {
             </div>
           </div>
           
-          <div className="filter-group">
+          <div className="ph-filter-group">
             <label>Payment Type:</label>
-            <div className="filter-buttons">
+            <div className="ph-filter-buttons">
               <button 
-                className={`filter-btn ${typeFilter === 'all' ? 'active' : ''}`}
+                className={`ph-filter-btn ${typeFilter === 'all' ? 'ph-active' : ''}`}
                 onClick={() => setTypeFilter('all')}
               >
                 All ({typeCounts.all})
               </button>
               <button 
-                className={`filter-btn ${typeFilter === 'service' ? 'active' : ''}`}
+                className={`ph-filter-btn ${typeFilter === 'service' ? 'ph-active' : ''}`}
                 onClick={() => setTypeFilter('service')}
               >
                 Services ({typeCounts.service})
               </button>
               <button 
-                className={`filter-btn ${typeFilter === 'parts' ? 'active' : ''}`}
+                className={`ph-filter-btn ${typeFilter === 'parts' ? 'ph-active' : ''}`}
                 onClick={() => setTypeFilter('parts')}
               >
                 Parts ({typeCounts.parts})
@@ -205,9 +217,9 @@ const PaymentHistory = () => {
         </div>
       </div>
 
-      <div className="payment-list">
+      <div className="ph-payment-list">
         {filteredPayments.length > 0 ? (
-          <table className="payments-table">
+          <table className="ph-payments-table">
             <thead>
               <tr>
                 <th>Date</th>
@@ -222,28 +234,28 @@ const PaymentHistory = () => {
               {filteredPayments.map(payment => (
                 <tr key={payment.id}>
                   <td>
-                    <div className="date-cell">
-                      <FaCalendarAlt className="calendar-icon" />
+                    <div className="ph-date-cell">
+                      <FaCalendarAlt className="ph-calendar-icon" />
                       {new Date(payment.date).toLocaleDateString()}
                     </div>
                   </td>
                   <td>
-                    <div className="type-cell">
+                    <div className="ph-type-cell">
                       {getTypeIcon(payment.type)}
                       {getTypeText(payment.type)}
                     </div>
                   </td>
-                  <td>{payment.description}</td>
-                  <td className="amount-cell">${payment.amount.toFixed(2)}</td>
+                  <td className="ph-description-cell">{payment.description}</td>
+                  <td className="ph-amount-cell">৳{(payment.amount / 100).toFixed(2)}</td>
                   <td>
-                    <div className={`status-cell ${payment.status}`}>
+                    <div className={`ph-status-cell ph-${payment.status}`}>
                       {getStatusIcon(payment.status)}
                       {getStatusText(payment.status)}
                     </div>
                   </td>
                   <td>
                     <button 
-                      className="receipt-btn"
+                      className="ph-receipt-btn"
                       onClick={() => openReceiptModal(payment)}
                     >
                       View Receipt
@@ -254,40 +266,40 @@ const PaymentHistory = () => {
             </tbody>
           </table>
         ) : (
-          <div className="no-payments">
+          <div className="ph-no-payments">
             <p>No payments found matching your filters</p>
-            <Link to="/services" className="explore-btn">
+            <button className="ph-explore-btn">
               Explore Services <FaArrowRight />
-            </Link>
+            </button>
           </div>
         )}
       </div>
 
       {showReceiptModal && selectedPayment && (
-        <div className="receipt-modal-overlay">
-          <div className="receipt-modal">
-            <div className="modal-header">
+        <div className="ph-receipt-modal-overlay">
+          <div className="ph-receipt-modal">
+            <div className="ph-modal-header">
               <h3>Payment Receipt</h3>
               <button 
-                className="close-modal"
+                className="ph-close-modal"
                 onClick={() => setShowReceiptModal(false)}
               >
                 ×
               </button>
             </div>
             
-            <div className="receipt-content">
-              <div className="receipt-row">
+            <div className="ph-receipt-content">
+              <div className="ph-receipt-row">
                 <span>Invoice Number:</span>
                 <strong>{selectedPayment.invoiceNumber}</strong>
               </div>
               
-              <div className="receipt-row">
+              <div className="ph-receipt-row">
                 <span>Date:</span>
                 <span>{new Date(selectedPayment.date).toLocaleDateString()}</span>
               </div>
               
-              <div className="receipt-row">
+              <div className="ph-receipt-row">
                 <span>Type:</span>
                 <span>
                   {getTypeIcon(selectedPayment.type)}
@@ -295,34 +307,41 @@ const PaymentHistory = () => {
                 </span>
               </div>
               
-              <div className="receipt-row">
+              <div className="ph-receipt-row">
                 <span>Description:</span>
                 <span>{selectedPayment.description}</span>
               </div>
               
-              <div className="receipt-row">
+              <div className="ph-receipt-row">
                 <span>Payment Method:</span>
                 <span>{selectedPayment.method}</span>
               </div>
+
+              <div className="ph-receipt-row">
+                <span>Delivery Address:</span>
+                <span>{selectedPayment.deliveryAddress}</span>
+              </div>
               
-              <div className="receipt-row">
+              <div className="ph-receipt-row">
                 <span>Status:</span>
-                <span className={`status-text ${selectedPayment.status}`}>
+                <span className={`ph-status-text ph-${selectedPayment.status}`}>
                   {getStatusIcon(selectedPayment.status)}
                   {getStatusText(selectedPayment.status)}
                 </span>
               </div>
               
-              <div className="receipt-row total-row">
+              <div className="ph-receipt-row ph-total-row">
                 <span>Total Amount:</span>
-                <span className="total-amount">${selectedPayment.amount.toFixed(2)}</span>
+                <span className="ph-total-amount">৳{(selectedPayment.amount / 100).toFixed(2)}</span>
               </div>
             </div>
             
-            <div className="modal-actions">
-              <button className="print-btn">Print Receipt</button>
+            <div className="ph-modal-actions">
+              <button className="ph-download-btn" onClick={handleDownloadPDF}>
+                <FaFilePdf /> Download PDF
+              </button>
               <button 
-                className="close-btn"
+                className="ph-close-btn"
                 onClick={() => setShowReceiptModal(false)}
               >
                 Close

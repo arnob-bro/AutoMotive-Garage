@@ -8,79 +8,81 @@ const Parts = () => {
     {
       id: 1,
       name: 'Premium Brake Pads',
-      description: 'High-performance ceramic brake pads for all weather conditions',
-      price: 59.99,
+      shortDescription: 'High-performance ceramic brake pads',
+      longDescription: 'High-performance ceramic brake pads for all weather conditions. Ceramic compound provides low dust and quiet operation. Fits most sedans and SUVs. Warranty: 2 years or 50,000 km.',
+      price: 5999,
       category: 'Brakes',
-      image: 'https://via.placeholder.com/300x200?text=Brake+Pads',
-      details: 'Ceramic compound, low dust, quiet operation, fits most sedans and SUVs'
+      image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=300&q=80',
     },
     {
       id: 2,
       name: 'Performance Air Filter',
-      description: 'High-flow reusable air filter',
-      price: 39.99,
+      shortDescription: 'High-flow reusable air filter',
+      longDescription: 'High-flow reusable air filter increases airflow by 50% compared to standard filters. Washable and reusable design saves money long-term. Fits most vehicle models. Improves engine performance and efficiency.',
+      price: 3999,
       category: 'Engine',
-      image: 'https://via.placeholder.com/300x200?text=Air+Filter',
-      details: 'Washable and reusable, increases airflow by 50%, fits most models'
+      image: 'https://images.unsplash.com/photo-1558980394-4c7c9299fe96?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=300&q=80',
     },
     {
       id: 3,
       name: 'Synthetic Motor Oil 5W-30',
-      description: 'Full synthetic engine oil 5qt',
-      price: 34.99,
+      shortDescription: 'Full synthetic engine oil 5qt',
+      longDescription: 'Premium full synthetic engine oil (5-quart bottle) with 5W-30 viscosity. Provides superior engine protection, reduces wear, and extends engine life. Compatible with most modern vehicles. Change interval: 10,000 km or 6 months.',
+      price: 3499,
       category: 'Fluids',
-      image: 'https://via.placeholder.com/300x200?text=Motor+Oil',
-      details: '5-quart bottle, 5W-30 viscosity, extends engine life'
+      image: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=300&q=80',
     },
     {
       id: 4,
       name: 'All-Season Tires',
-      description: 'Set of 4 premium all-season tires',
-      price: 599.99,
+      shortDescription: 'Set of 4 premium all-season tires',
+      longDescription: 'Set of 4 premium all-season tires with 65,000 km warranty. Excellent wet and dry traction. Size: 225/55R17. Features advanced tread pattern for reduced road noise and improved handling in all weather conditions.',
+      price: 59999,
       category: 'Tires',
-      image: 'https://via.placeholder.com/300x200?text=Tires',
-      details: '65,000 mile warranty, excellent wet/dry traction, 225/55R17'
+      image: 'https://images.unsplash.com/photo-1554744512-d6c603f27c54?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=300&q=80',
     },
     {
       id: 5,
       name: 'Car Battery',
-      description: 'High-performance automotive battery',
-      price: 129.99,
+      shortDescription: 'High-performance automotive battery',
+      longDescription: 'High-performance automotive battery with 750 cold cranking amps (CCA). 36-month warranty. Maintenance-free design. Fits most vehicles. Provides reliable starting power in extreme temperatures. Dimensions: 24.5 x 17 x 19 cm.',
+      price: 12999,
       category: 'Electrical',
-      image: 'https://via.placeholder.com/300x200?text=Battery',
-      details: '750 CCA, 36-month warranty, fits most vehicles'
+      image: 'https://images.unsplash.com/photo-1567767292278-a4f21aa2d36e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=300&q=80',
     },
     {
       id: 6,
       name: 'LED Headlight Bulbs',
-      description: 'Ultra-bright LED conversion kit',
-      price: 89.99,
+      shortDescription: 'Ultra-bright LED conversion kit',
+      longDescription: 'Ultra-bright LED headlight conversion kit with 6000K white light. Plug-and-play installation with no wiring modifications needed. 50,000 hour lifespan. Provides 300% more light than standard halogen bulbs. Includes cooling fan for heat dissipation.',
+      price: 8999,
       category: 'Lighting',
-      image: 'https://via.placeholder.com/300x200?text=LED+Bulbs',
-      details: '6000K white light, plug-and-play installation, 50,000 hour lifespan'
+      image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=300&q=80',
     },
     {
       id: 7,
       name: 'Car Cover',
-      description: 'Premium outdoor car cover',
-      price: 149.99,
+      shortDescription: 'Premium outdoor car cover',
+      longDescription: 'Premium outdoor car cover with weatherproof and UV protection. Fits midsize sedans (length: 4.7-4.9m). 4-layer construction protects against rain, sun, dust, and scratches. Includes storage bag and lock holes. Color: Gray.',
+      price: 14999,
       category: 'Accessories',
-      image: 'https://via.placeholder.com/300x200?text=Car+Cover',
-      details: 'Weatherproof, UV protection, fits midsize sedans'
+      image: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=300&q=80',
     },
     {
       id: 8,
       name: 'Diagnostic Scanner',
-      description: 'OBD2 code reader and scanner',
-      price: 99.99,
+      shortDescription: 'OBD2 code reader and scanner',
+      longDescription: 'Professional OBD2 code reader and scanner. Reads and clears engine codes, views live data, and checks smog readiness. Compatible with all OBD2 vehicles (1996 and newer). Large color screen with multilingual interface. Includes carry case.',
+      price: 9999,
       category: 'Tools',
-      image: 'https://via.placeholder.com/300x200?text=Scanner',
-      details: 'Reads/clears codes, live data, smog check readiness'
+      image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&h=300&q=80',
     }
   ]);
 
   const [cart, setCart] = useState([]);
-  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 100000]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(100000);
   const [selectedPart, setSelectedPart] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -106,11 +108,25 @@ const Parts = () => {
   );
 
   const addToCart = (part) => {
-    setCart([...cart, part]);
+    const existingItem = cart.find(item => item.id === part.id);
+    if (existingItem) {
+      setCart(cart.map(item => 
+        item.id === part.id ? { ...item, quantity: item.quantity + 1 } : item
+      ));
+    } else {
+      setCart([...cart, { ...part, quantity: 1 }]);
+    }
   };
 
   const removeFromCart = (partId) => {
     setCart(cart.filter(item => item.id !== partId));
+  };
+
+  const updateQuantity = (partId, newQuantity) => {
+    if (newQuantity < 1) return;
+    setCart(cart.map(item => 
+      item.id === partId ? { ...item, quantity: newQuantity } : item
+    ));
   };
 
   const openDetails = (part) => {
@@ -122,73 +138,105 @@ const Parts = () => {
     navigate('/checkout');
   };
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+  const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+  // Calculate fill percentage for price range slider
+  const fillPercent = ((priceRange[1] - priceRange[0]) / (maxPrice - minPrice)) * 100 + '%';
+  
+  // Update min/max prices when parts change
+  useEffect(() => {
+    if (parts.length > 0) {
+      const prices = parts.map(part => part.price);
+      const min = Math.min(...prices);
+      const max = Math.max(...prices);
+      setMinPrice(min);
+      setMaxPrice(max);
+      setPriceRange([min, max]);
+    }
+  }, [parts]);
 
   return (
-    <div className="parts-page">
+    <div className="partsPage">
       <button 
-        className={`cart-toggle-btn ${cart.length > 0 ? 'has-items' : ''}`}
+        className={`partsPage-cart-toggle-btn ${cart.length > 0 ? 'has-items' : ''}`}
         onClick={() => setShowCart(!showCart)}
       >
-        {showCart ? 'Hide Cart' : `View Cart (${cart.length})`}
+        {showCart ? 'Hide Cart' : `View Cart (${cart.reduce((sum, item) => sum + item.quantity, 0)})`}
       </button>
 
-      <div className="parts-header">
+      <div className="partsPage-header">
         <h1>Auto Parts & Accessories</h1>
         <p>Quality parts for your vehicle at competitive prices</p>
       </div>
 
-      <div className="parts-controls">
-        <div className="price-filter">
-          <label>Price Range: ${priceRange[0]} - ${priceRange[1]}</label>
-          <input 
-            type="range" 
-            min="0" 
-            max="1000" 
-            value={priceRange[1]} 
-            onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-          />
+      <div className="partsPage-controls">
+        <div className="partsPage-price-filter-container">
+          <label>Price Range: ৳{priceRange[0].toLocaleString()} - ৳{priceRange[1].toLocaleString()}</label>
+          <div className="partsPage-price-filter">
+            <input 
+              type="range" 
+              min={minPrice} 
+              max={maxPrice} 
+              step="1000"
+              value={priceRange[0]} 
+              onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
+              className="partsPage-price-slider partsPage-price-slider-min"
+            />
+            <input 
+              type="range" 
+              min={minPrice} 
+              max={maxPrice} 
+              step="1000"
+              value={priceRange[1]} 
+              onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+              className="partsPage-price-slider partsPage-price-slider-max"
+              style={{ '--fill-percent': fillPercent }}
+            />
+          </div>
         </div>
 
-        <div className="category-filter">
+        <div className="partsPage-category-filter-container">
           <label>Category:</label>
-          <select 
-            value={selectedCategory} 
-            onChange={(e) => setSelectedCategory(e.target.value)}
-          >
-            {categories.map(category => (
-              <option key={category} value={category}>{category}</option>
-            ))}
-          </select>
+          <div className="partsPage-category-filter">
+            <select 
+              value={selectedCategory} 
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
+              {categories.map(category => (
+                <option key={category} value={category}>{category}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
-      <div className="parts-container">
+      <div className="partsPage-container">
         {filteredParts.map(part => (
-          <div key={part.id} className="part-card">
-            <div className="part-image">
-              <img src={part.image} alt={part.name} />
+          <div key={part.id} className="partsPage-part-card">
+            <div className="partsPage-part-image">
+              <img 
+                src={part.image} 
+                alt={part.name} 
+                onError={(e) => {
+                  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY1ZTE0Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5QYXJ0IEltYWdlPC90ZXh0Pjwvc3ZnPg==';
+                }}
+              />
+              <span className="partsPage-part-category">{part.category}</span>
             </div>
-            <div className="part-info">
+            <div className="partsPage-part-info">
               <h3>{part.name}</h3>
-              <p>{part.description}</p>
-              <div className="part-meta">
-                <span className="part-category">{part.category}</span>
-                <span className="part-price">${part.price.toFixed(2)}</span>
-              </div>
-              <div className="part-actions">
+              <p className="partsPage-short-description">{part.shortDescription}</p>
+              <div className="partsPage-part-price">৳{part.price.toLocaleString()}</div>
+              <div className="partsPage-part-actions">
                 <button 
-                  className="details-btn"
+                  className="partsPage-details-btn"
                   onClick={() => openDetails(part)}
                 >
                   Details
                 </button>
                 <button 
-                  className="add-to-cart-btn"
-                  onClick={() => {
-                    addToCart(part);
-                    setShowCart(true);
-                  }}
+                  className="partsPage-add-to-cart-btn"
+                  onClick={() => addToCart(part)}
                 >
                   Add to Cart
                 </button>
@@ -198,24 +246,40 @@ const Parts = () => {
         ))}
       </div>
 
-      <div className={`cart-sidebar ${showCart ? 'active' : ''}`}>
-        <div className="cart-header">
-          <h3>Your Cart ({cart.length})</h3>
+      <div className={`partsPage-cart-sidebar ${showCart ? 'active' : ''}`}>
+        <div className="partsPage-cart-header">
+          <h3>Your Cart ({cart.reduce((sum, item) => sum + item.quantity, 0)})</h3>
           <button 
-            className="close-cart"
+            className="partsPage-close-cart"
             onClick={() => setShowCart(false)}
           >
             ×
           </button>
         </div>
-        <div className="cart-items">
+        <div className="partsPage-cart-items">
           {cart.length > 0 ? (
             cart.map(item => (
-              <div key={item.id} className="cart-item">
-                <span>{item.name}</span>
-                <span>${item.price.toFixed(2)}</span>
+              <div key={item.id} className="partsPage-cart-item">
+                <div className="partsPage-item-image">
+                  <img 
+                    src={item.image} 
+                    alt={item.name} 
+                    onError={(e) => {
+                      e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY1ZTE0Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5QYXJ0IEltYWdlPC90ZXh0Pjwvc3ZnPg==';
+                    }}
+                  />
+                </div>
+                <div className="partsPage-item-details">
+                  <span className="partsPage-item-name">{item.name}</span>
+                  <span className="partsPage-item-price">৳{item.price.toLocaleString()}</span>
+                  <div className="partsPage-quantity-controls">
+                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                    <span>{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                  </div>
+                </div>
                 <button 
-                  className="remove-item"
+                  className="partsPage-remove-item"
                   onClick={() => removeFromCart(item.id)}
                 >
                   ×
@@ -223,17 +287,17 @@ const Parts = () => {
               </div>
             ))
           ) : (
-            <p className="empty-cart">Your cart is empty</p>
+            <p className="partsPage-empty-cart">Your cart is empty</p>
           )}
         </div>
         {cart.length > 0 && (
           <>
-            <div className="cart-total">
+            <div className="partsPage-cart-total">
               <span>Total:</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              <span>৳{totalPrice.toLocaleString()}</span>
             </div>
             <button 
-              className="checkout-btn"
+              className="partsPage-checkout-btn"
               onClick={proceedToCheckout}
             >
               Proceed to Checkout
@@ -243,32 +307,37 @@ const Parts = () => {
       </div>
 
       {showModal && selectedPart && (
-        <div className="part-modal">
-          <div className="modal-content">
+        <div className="partsPage-part-modal">
+          <div className="partsPage-modal-content">
             <button 
-              className="close-modal"
+              className="partsPage-close-modal"
               onClick={() => setShowModal(false)}
             >
               ×
             </button>
-            <div className="modal-image">
-              <img src={selectedPart.image} alt={selectedPart.name} />
+            <div className="partsPage-modal-image-container">
+              <img 
+                src={selectedPart.image} 
+                alt={selectedPart.name} 
+                className="partsPage-modal-image"
+                onError={(e) => {
+                  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZmY1ZTE0Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5QYXJ0IEltYWdlPC90ZXh0Pjwvc3ZnPg==';
+                }}
+              />
             </div>
-            <div className="modal-info">
+            <div className="partsPage-modal-info">
               <h2>{selectedPart.name}</h2>
-              <p className="modal-category">{selectedPart.category}</p>
-              <p className="modal-price">${selectedPart.price.toFixed(2)}</p>
-              <p className="modal-description">{selectedPart.description}</p>
-              <div className="modal-details">
-                <h4>Product Details:</h4>
-                <p>{selectedPart.details}</p>
+              <p className="partsPage-modal-category">{selectedPart.category}</p>
+              <p className="partsPage-modal-price">৳{selectedPart.price.toLocaleString()}</p>
+              <div className="partsPage-modal-description">
+                <h4>Product Description:</h4>
+                <p>{selectedPart.longDescription}</p>
               </div>
               <button 
-                className="modal-add-to-cart"
+                className="partsPage-modal-add-to-cart"
                 onClick={() => {
                   addToCart(selectedPart);
                   setShowModal(false);
-                  setShowCart(true);
                 }}
               >
                 Add to Cart

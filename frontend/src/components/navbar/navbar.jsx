@@ -53,7 +53,7 @@ const Navbar = () => {
           </div>
           <div className="logo-text">
             <span>AutoMotive</span>
-            <span className="logo-highlight">Pro</span>
+            <span className="logo-highlight">Garage</span>
           </div>
         </Link>
 
@@ -130,22 +130,29 @@ const Navbar = () => {
 
               {dropdownOpen && (
                 <div className="user-dropdown">
-                  <Link to="/account" className="dropdown-item">
+
+                 <Link to="/account" className="dropdown-item">
                     <FaUser className="dropdown-icon" />
                     My Account
                   </Link>
+                 
                   <Link to="/admin" className="dropdown-item">
                     <FaUserShield className="dropdown-icon" />
                     Admin
-                  </Link>
+                  </Link> 
+
+                  
+
                   <Link to="/login" className="dropdown-item">
                     <FaUser className="dropdown-icon" />
                     Login
-                  </Link>
-                  <button onClick={handleLogout} className="dropdown-item logout">
+                  </Link>  
+
+                   <button onClick={handleLogout} className="dropdown-item logout">
                     <span>Logout</span>
                     <FaSignOutAlt className="logout-icon" />
-                  </button>
+                  </button> 
+
                 </div>
               )}
             </div>

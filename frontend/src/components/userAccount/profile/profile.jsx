@@ -1,33 +1,44 @@
 import React, { useState } from 'react';
-import { FaUser, FaEnvelope, FaPhone, FaCalendarAlt, FaSave, FaEdit } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaPhone, FaCalendarAlt, FaSave, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import './profile.css';
 
 const Profile = () => {
-  // Initial user data
+  // Initial user data with Bangladesh-specific information
   const initialUserData = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 (555) 123-4567',
+    name: 'Abdul Rahman',
+    email: 'abdul.rahman@example.com',
+    phone: '+880 1712 345678',
     joinDate: 'January 2023',
-    address: '123 Automotive Road, Dhaka',
-    vehicles: [
-      { id: 1, make: 'Toyota', model: 'Corolla', year: '2020' },
-      { id: 2, make: 'Honda', model: 'CR-V', year: '2018' }
-    ]
+    address: '123 Motijheel Commercial Area, Dhaka 1000, Bangladesh',
+    vehicles: []
   };
 
   const [userData, setUserData] = useState(initialUserData);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedData, setEditedData] = useState(initialUserData);
+  const [editedData, setEditedData] = useState({
+    ...initialUserData,
+    vehicles: [...initialUserData.vehicles]
+  });
 
   const handleEdit = () => {
-    setEditedData(userData);
+    setEditedData({
+      ...userData,
+      vehicles: userData.vehicles.map(v => ({...v}))
+    });
     setIsEditing(true);
   };
 
   const handleSave = () => {
-    setUserData(editedData);
+    // Filter out any empty vehicles before saving
+    const validVehicles = editedData.vehicles.filter(
+      vehicle => vehicle.make.trim() && vehicle.model.trim() && vehicle.year.trim()
+    );
+    
+    setUserData({
+      ...editedData,
+      vehicles: validVehicles
+    });
     setIsEditing(false);
   };
 
@@ -43,29 +54,59 @@ const Profile = () => {
     }));
   };
 
+  const handleVehicleChange = (id, field, value) => {
+    setEditedData(prev => ({
+      ...prev,
+      vehicles: prev.vehicles.map(vehicle => 
+        vehicle.id === id ? {...vehicle, [field]: value} : vehicle
+      )
+    }));
+  };
+
+  const addNewVehicle = () => {
+    const newId = editedData.vehicles.length > 0 
+      ? Math.max(...editedData.vehicles.map(v => v.id)) + 1 
+      : 1;
+    
+    setEditedData(prev => ({
+      ...prev,
+      vehicles: [
+        ...prev.vehicles,
+        { id: newId, make: '', model: '', year: '' }
+      ]
+    }));
+  };
+
+  const deleteVehicle = (id) => {
+    setEditedData(prev => ({
+      ...prev,
+      vehicles: prev.vehicles.filter(vehicle => vehicle.id !== id)
+    }));
+  };
+
   return (
-    <div className="profile-container">
-      <div className="profile-header">
-        <h2><FaUser className="header-icon" /> Personal Information</h2>
+    <div className="auto-profile-container">
+      <div className="auto-profile-header">
+        <h2><FaUser className="auto-header-icon" /> Personal Information</h2>
         {!isEditing ? (
-          <button onClick={handleEdit} className="edit-btn">
+          <button onClick={handleEdit} className="auto-edit-btn">
             <FaEdit /> Edit Profile
           </button>
         ) : (
-          <div className="edit-actions">
-            <button onClick={handleSave} className="save-btn">
+          <div className="auto-edit-actions">
+            <button onClick={handleSave} className="auto-save-btn">
               <FaSave /> Save Changes
             </button>
-            <button onClick={handleCancel} className="cancel-btn">
+            <button onClick={handleCancel} className="auto-cancel-btn">
               Cancel
             </button>
           </div>
         )}
       </div>
 
-      <div className="profile-content">
-        <div className="profile-details">
-          <div className="detail-item">
+      <div className="auto-profile-content">
+        <div className="auto-profile-details">
+          <div className="auto-detail-item">
             <label>Full Name</label>
             {isEditing ? (
               <input
@@ -73,13 +114,14 @@ const Profile = () => {
                 name="name"
                 value={editedData.name}
                 onChange={handleChange}
+                className="auto-edit-input"
               />
             ) : (
-              <p>{userData.name}</p>
+              <p className="auto-detail-text">{userData.name}</p>
             )}
           </div>
 
-          <div className="detail-item">
+          <div className="auto-detail-item">
             <label><FaEnvelope /> Email</label>
             {isEditing ? (
               <input
@@ -87,13 +129,14 @@ const Profile = () => {
                 name="email"
                 value={editedData.email}
                 onChange={handleChange}
+                className="auto-edit-input"
               />
             ) : (
-              <p>{userData.email}</p>
+              <p className="auto-detail-text">{userData.email}</p>
             )}
           </div>
 
-          <div className="detail-item">
+          <div className="auto-detail-item">
             <label><FaPhone /> Phone Number</label>
             {isEditing ? (
               <input
@@ -101,18 +144,19 @@ const Profile = () => {
                 name="phone"
                 value={editedData.phone}
                 onChange={handleChange}
+                className="auto-edit-input"
               />
             ) : (
-              <p>{userData.phone}</p>
+              <p className="auto-detail-text">{userData.phone}</p>
             )}
           </div>
 
-          <div className="detail-item">
+          <div className="auto-detail-item">
             <label><FaCalendarAlt /> Member Since</label>
-            <p>{userData.joinDate}</p>
+            <p className="auto-detail-text">{userData.joinDate}</p>
           </div>
 
-          <div className="detail-item">
+          <div className="auto-detail-item">
             <label>Address</label>
             {isEditing ? (
               <input
@@ -120,31 +164,93 @@ const Profile = () => {
                 name="address"
                 value={editedData.address}
                 onChange={handleChange}
+                className="auto-edit-input"
               />
             ) : (
-              <p>{userData.address}</p>
+              <p className="auto-detail-text">{userData.address}</p>
             )}
           </div>
         </div>
 
-        <div className="profile-vehicles">
-          <h3>Your Vehicles</h3>
-          {userData.vehicles.length > 0 ? (
-            <div className="vehicles-list">
-              {userData.vehicles.map(vehicle => (
-                <div key={vehicle.id} className="vehicle-card">
-                  <div className="vehicle-make">{vehicle.make}</div>
-                  <div className="vehicle-model">{vehicle.model}</div>
-                  <div className="vehicle-year">{vehicle.year}</div>
-                  <Link to="/services" className="service-link">Schedule Service</Link>
-                </div>
-              ))}
-            </div>
+        <div className="auto-profile-vehicles">
+          <div className="auto-vehicles-header">
+            <h3>Your Vehicles</h3>
+            {isEditing && (
+              <button onClick={addNewVehicle} className="auto-add-vehicle-btn">
+                <FaPlus /> Add Vehicle
+              </button>
+            )}
+          </div>
+          
+          {isEditing ? (
+            editedData.vehicles.length > 0 ? (
+              <div className="auto-vehicles-list">
+                {editedData.vehicles.map((vehicle) => (
+                  <div key={vehicle.id} className="auto-vehicle-card">
+                    <div className="auto-vehicle-edit-field">
+                      <label>Make</label>
+                      <input
+                        type="text"
+                        value={vehicle.make}
+                        onChange={(e) => handleVehicleChange(vehicle.id, 'make', e.target.value)}
+                        className="auto-edit-input"
+                        placeholder="e.g. Toyota"
+                      />
+                    </div>
+                    <div className="auto-vehicle-edit-field">
+                      <label>Model</label>
+                      <input
+                        type="text"
+                        value={vehicle.model}
+                        onChange={(e) => handleVehicleChange(vehicle.id, 'model', e.target.value)}
+                        className="auto-edit-input"
+                        placeholder="e.g. Corolla"
+                      />
+                    </div>
+                    <div className="auto-vehicle-edit-field">
+                      <label>Year</label>
+                      <input
+                        type="text"
+                        value={vehicle.year}
+                        onChange={(e) => handleVehicleChange(vehicle.id, 'year', e.target.value)}
+                        className="auto-edit-input"
+                        placeholder="e.g. 2020"
+                      />
+                    </div>
+                    <div className="auto-vehicle-actions">
+                      <button 
+                        onClick={() => deleteVehicle(vehicle.id)} 
+                        className="auto-delete-vehicle-btn"
+                        aria-label="Delete vehicle"
+                      >
+                        <FaTrash /> Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="auto-no-vehicles">
+                <p>No vehicles added yet</p>
+              </div>
+            )
           ) : (
-            <div className="no-vehicles">
-              <p>You haven't added any vehicles yet</p>
-              <Link to="/add-vehicle" className="add-vehicle-btn">Add Vehicle</Link>
-            </div>
+            userData.vehicles.length > 0 ? (
+              <div className="auto-vehicles-list">
+                {userData.vehicles.map(vehicle => (
+                  <div key={vehicle.id} className="auto-vehicle-card">
+                    <div className="auto-vehicle-make">{vehicle.make || 'Make not specified'}</div>
+                    <div className="auto-vehicle-model">{vehicle.model || 'Model not specified'}</div>
+                    <div className="auto-vehicle-year">{vehicle.year || 'Year not specified'}</div>
+                    <Link to="/services" className="auto-service-link">Schedule Service</Link>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="auto-no-vehicles">
+                <p>You haven't added any vehicles yet</p>
+              </div>
+            )
           )}
         </div>
       </div>

@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import './ServiceHistory.css';
 
 const ServiceHistory = () => {
-  // Sample service data
+  // Sample service data with Bangladesh-related information
   const allServices = [
     {
       id: 1,
@@ -16,8 +16,9 @@ const ServiceHistory = () => {
       serviceType: 'Oil Change',
       vehicle: 'Toyota Corolla 2020',
       status: 'completed',
-      cost: 89.99,
-      duration: '1 hour'
+      cost: 4500,
+      duration: '1 hour',
+      location: 'Dhaka Auto Care, Gulshan'
     },
     {
       id: 2,
@@ -25,8 +26,9 @@ const ServiceHistory = () => {
       serviceType: 'Brake Inspection',
       vehicle: 'Toyota Corolla 2020',
       status: 'completed',
-      cost: 49.99,
-      duration: '45 mins'
+      cost: 2500,
+      duration: '45 mins',
+      location: 'Chittagong Car Service, Agrabad'
     },
     {
       id: 3,
@@ -34,8 +36,9 @@ const ServiceHistory = () => {
       serviceType: 'Tire Rotation',
       vehicle: 'Toyota Corolla 2020',
       status: 'in-progress',
-      cost: 39.99,
-      duration: '30 mins'
+      cost: 2000,
+      duration: '30 mins',
+      location: 'Khulna Auto Workshop, Khalishpur'
     },
     {
       id: 4,
@@ -43,8 +46,9 @@ const ServiceHistory = () => {
       serviceType: 'Engine Diagnostics',
       vehicle: 'Toyota Corolla 2020',
       status: 'pending',
-      cost: 99.99,
-      duration: '2 hours'
+      cost: 5000,
+      duration: '2 hours',
+      location: 'Sylhet Motor Care, Zindabazar'
     }
   ];
 
@@ -61,13 +65,13 @@ const ServiceHistory = () => {
   const getStatusIcon = (status) => {
     switch(status) {
       case 'completed':
-        return <FaCheckCircle className="status-icon completed" />;
+        return <FaCheckCircle className="sh-status-icon sh-completed" />;
       case 'in-progress':
-        return <FaSpinner className="status-icon in-progress" />;
+        return <FaSpinner className="sh-status-icon sh-in-progress" />;
       case 'pending':
-        return <FaClock className="status-icon pending" />;
+        return <FaClock className="sh-status-icon sh-pending" />;
       default:
-        return <FaExclamationTriangle className="status-icon unknown" />;
+        return <FaExclamationTriangle className="sh-status-icon sh-unknown" />;
     }
   };
 
@@ -79,31 +83,31 @@ const ServiceHistory = () => {
   };
 
   return (
-    <div className="service-history-container">
-      <div className="service-history-header">
-        <h2><FaHistory /> Service History</h2>
-        <div className="filter-controls">
-          <div className="filter-buttons">
+    <div className="sh-container">
+      <div className="sh-header">
+        <h2><FaHistory className="sh-header-icon" /> Service History</h2>
+        <div className="sh-filter-controls">
+          <div className="sh-filter-buttons">
             <button 
-              className={`filter-btn ${filter === 'all' ? 'active' : ''}`}
+              className={`sh-filter-btn ${filter === 'all' ? 'sh-active' : ''}`}
               onClick={() => setFilter('all')}
             >
               All ({statusCounts.all})
             </button>
             <button 
-              className={`filter-btn ${filter === 'completed' ? 'active' : ''}`}
+              className={`sh-filter-btn ${filter === 'completed' ? 'sh-active' : ''}`}
               onClick={() => setFilter('completed')}
             >
               Completed ({statusCounts.completed})
             </button>
             <button 
-              className={`filter-btn ${filter === 'in-progress' ? 'active' : ''}`}
+              className={`sh-filter-btn ${filter === 'in-progress' ? 'sh-active' : ''}`}
               onClick={() => setFilter('in-progress')}
             >
               In Progress ({statusCounts['in-progress']})
             </button>
             <button 
-              className={`filter-btn ${filter === 'pending' ? 'active' : ''}`}
+              className={`sh-filter-btn ${filter === 'pending' ? 'sh-active' : ''}`}
               onClick={() => setFilter('pending')}
             >
               Pending ({statusCounts.pending})
@@ -113,111 +117,115 @@ const ServiceHistory = () => {
       </div>
 
       {showBookingPromo && (
-        <div className="booking-promo-card">
-          <div className="promo-content">
-            <h3><FaPlusCircle /> Need Another Service?</h3>
+        <div className="sh-booking-promo-card">
+          <div className="sh-promo-content">
+            <h3><FaPlusCircle className="sh-promo-icon" /> Need Another Service?</h3>
             <p>Book your next service now and get 10% off your first maintenance package!</p>
-            <div className="promo-highlights">
-              <div className="highlight-item">
-                <FaCheckCircle className="highlight-icon" />
+            <div className="sh-promo-highlights">
+              <div className="sh-highlight-item">
+                <FaCheckCircle className="sh-highlight-icon" />
                 <span>Quick online booking</span>
               </div>
-              <div className="highlight-item">
-                <FaCheckCircle className="highlight-icon" />
+              <div className="sh-highlight-item">
+                <FaCheckCircle className="sh-highlight-icon" />
                 <span>Flexible scheduling</span>
               </div>
-              <div className="highlight-item">
-                <FaCheckCircle className="highlight-icon" />
+              <div className="sh-highlight-item">
+                <FaCheckCircle className="sh-highlight-icon" />
                 <span>Expert technicians</span>
               </div>
             </div>
-            <Link to="/services" className="promo-cta-btn">
-              Book Now <FaArrowRight />
+            <Link to="/services" className="sh-promo-cta-btn">
+              Book Now <FaArrowRight className="sh-arrow-icon" />
             </Link>
           </div>
-          <div className="promo-image">
+          <div className="sh-promo-image">
             <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537" alt="Car Service" />
           </div>
           <button 
-            className="close-promo-btn"
+            className="sh-close-promo-btn"
             onClick={() => setShowBookingPromo(false)}
+            aria-label="Close promotion"
           >
             ×
           </button>
         </div>
       )}
 
-      <div className="service-list">
+      <div className="sh-service-list">
         {filteredServices.length > 0 ? (
           filteredServices.map(service => (
-            <div key={service.id} className="service-card">
-              <div className="service-header">
-                <div className="service-type">
-                  <FaTools className="service-icon" />
+            <div key={service.id} className="sh-service-card">
+              <div className="sh-service-header">
+                <div className="sh-service-type">
+                  <FaTools className="sh-service-icon" />
                   <h3>{service.serviceType}</h3>
                 </div>
-                <div className="service-status">
+                <div className="sh-service-status">
                   {getStatusIcon(service.status)}
-                  <span className={`status-text ${service.status}`}>
+                  <span className={`sh-status-text sh-${service.status}`}>
                     {service.status.replace('-', ' ')}
                   </span>
                 </div>
               </div>
               
-              <div className="service-details">
-                <div className="detail-row">
-                  <FaCalendarAlt className="detail-icon" />
+              <div className="sh-service-details">
+                <div className="sh-detail-row">
+                  <FaCalendarAlt className="sh-detail-icon" />
                   <span>{new Date(service.date).toLocaleDateString()}</span>
                 </div>
-                <div className="detail-row">
-                  <FaCar className="detail-icon" />
+                <div className="sh-detail-row">
+                  <FaCar className="sh-detail-icon" />
                   <span>{service.vehicle}</span>
                 </div>
-                <div className="detail-row">
-                  <span className="detail-label">Duration:</span>
+                <div className="sh-detail-row">
+                  <span className="sh-detail-label">Location:</span>
+                  <span>{service.location}</span>
+                </div>
+                <div className="sh-detail-row">
+                  <span className="sh-detail-label">Duration:</span>
                   <span>{service.duration}</span>
                 </div>
-                <div className="detail-row">
-                  <span className="detail-label">Cost:</span>
-                  <span className="service-cost">${service.cost.toFixed(2)}</span>
+                <div className="sh-detail-row">
+                  <span className="sh-detail-label">Cost:</span>
+                  <span className="sh-service-cost">BDT {service.cost.toLocaleString()}</span>
                 </div>
               </div>
-
-              {service.status === 'completed' && (
-                <button className="review-btn">
-                  Leave a Review
-                </button>
-              )}
+            
+             
             </div>
           ))
         ) : (
-          <div className="no-services">
+          <div className="sh-no-services">
             <p>No services found matching your filter</p>
-            <Link to="/services" className="book-service-btn">
+            <Link to="/services" className="sh-book-service-btn">
               Book a Service Now
             </Link>
           </div>
         )}
       </div>
 
-      <div className="quick-book-section">
+      {/* Commented out quick book section as requested */}
+      {/*
+      <div className="sh-quick-book-section">
         <h3>Quick Book</h3>
         <p>Schedule your next service in just a few clicks</p>
-        <div className="quick-book-options">
-          <Link to="/services/oil-change" className="quick-book-option">
-            <FaTools className="option-icon" />
+        <div className="sh-quick-book-options">
+          <Link to="/services/oil-change" className="sh-quick-book-option">
+            <FaTools className="sh-option-icon" />
             <span>Oil Change</span>
           </Link>
-          <Link to="/services/tire-rotation" className="quick-book-option">
-            <FaCar className="option-icon" />
+          <Link to="/services/tire-rotation" className="sh-quick-book-option">
+            <FaCar className="sh-option-icon" />
             <span>Tire Rotation</span>
           </Link>
-          <Link to="/services/brake-service" className="quick-book-option">
-            <FaTools className="option-icon" />
+          <Link to="/services/brake-service" className="sh-quick-book-option">
+            <FaTools className="sh-option-icon" />
             <span>Brake Service</span>
           </Link>
         </div>
       </div>
+      */}
     </div>
   );
 };

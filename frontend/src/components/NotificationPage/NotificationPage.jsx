@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { FaBell, FaCheck, FaTrash, FaFilter, FaSearch, FaRegBell } from 'react-icons/fa';
+import { FaBell, FaCheck, FaSearch, FaRegBell } from 'react-icons/fa';
 import './NotificationPage.css';
 
 const NotificationPage = () => {
-  // Sample notification data
-  const allNotifications = [
+  // Sample notification data with Bangladesh context
+  const initialNotifications = [
     {
       id: 1,
       type: 'service',
       title: 'Service Appointment Confirmed',
-      message: 'Your oil change service is confirmed for tomorrow at 10:00 AM',
+      message: 'Your oil change service is confirmed for tomorrow at 10:00 AM at our Dhaka service center',
       date: '2023-06-15',
       time: '09:30 AM',
       read: false,
@@ -19,7 +19,7 @@ const NotificationPage = () => {
       id: 2,
       type: 'order',
       title: 'Order Shipped',
-      message: 'Your order #12345 (Brake Pads) has been shipped and will arrive in 2-3 business days',
+      message: 'Your order #12345 (Brake Pads) has been shipped from Chittagong and will arrive in 2-3 business days',
       date: '2023-06-14',
       time: '03:45 PM',
       read: true,
@@ -29,7 +29,7 @@ const NotificationPage = () => {
       id: 3,
       type: 'payment',
       title: 'Payment Received',
-      message: 'We have received your payment of $89.99 for service #SRV-102',
+      message: 'We have received your payment of ৳89.99 for service #SRV-102',
       date: '2023-06-14',
       time: '11:20 AM',
       read: true,
@@ -39,7 +39,7 @@ const NotificationPage = () => {
       id: 4,
       type: 'promotion',
       title: 'Special Offer',
-      message: 'Get 15% off on your next service. Use code: SUMMER15 at checkout',
+      message: 'Get 15% off on your next service at our Sylhet branch. Use code: SUMMER15 at checkout',
       date: '2023-06-13',
       time: '10:00 AM',
       read: false,
@@ -49,7 +49,7 @@ const NotificationPage = () => {
       id: 5,
       type: 'system',
       title: 'Account Update',
-      message: 'Your account information has been successfully updated',
+      message: 'Your account information has been successfully updated in our Bangladesh system',
       date: '2023-06-12',
       time: '05:30 PM',
       read: true,
@@ -57,26 +57,24 @@ const NotificationPage = () => {
     }
   ];
 
-  const [notifications, setNotifications] = useState(allNotifications);
+  const [notifications, setNotifications] = useState(initialNotifications);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
 
-  // Available filters
-  const filters = ['all', 'unread', 'important'];
-  const types = ['all', 'service', 'order', 'payment', 'promotion', 'system'];
-
-  // Filter notifications
-  const filteredNotifications = allNotifications.filter(notification => {
+  const filteredNotifications = notifications.filter(notification => {
+    // Search term matching
     const matchesSearch = searchTerm === '' || 
       notification.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
       notification.message.toLowerCase().includes(searchTerm.toLowerCase());
     
+    // Filter matching
     const matchesFilter = 
-      (selectedFilter === 'all') ||
+      selectedFilter === 'all' ||
       (selectedFilter === 'unread' && !notification.read) ||
       (selectedFilter === 'important' && notification.important);
     
+    // Type matching
     const matchesType = selectedType === 'all' || notification.type === selectedType;
     
     return matchesSearch && matchesFilter && matchesType;
@@ -90,10 +88,6 @@ const NotificationPage = () => {
 
   const markAllAsRead = () => {
     setNotifications(notifications.map(n => ({...n, read: true})));
-  };
-
-  const deleteNotification = (id) => {
-    setNotifications(notifications.filter(n => n.id !== id));
   };
 
   const getTypeIcon = (type) => {
@@ -119,58 +113,60 @@ const NotificationPage = () => {
   };
 
   return (
-    <div className="notification-container">
-      <div className="notification-header">
-        <div className="header-content">
-          <FaBell className="header-icon" />
-          <h1>Notifications</h1>
+    <div className="notification-page">
+      <div className="notification-page-header">
+        <div className="notification-header-content">
+          <FaBell className="notification-header-icon" />
+          <h1 className="notification-header-title">Notifications</h1>
           <span className="notification-count">{filteredNotifications.length}</span>
         </div>
-        <p className="header-subtitle">Manage your notifications</p>
+        <p className="notification-header-subtitle">Manage your notifications</p>
       </div>
 
       <div className="notification-toolbar">
-        <div className="search-container">
-          <FaSearch className="search-icon" />
+        <div className="notification-search-container">
+          <FaSearch className="notification-search-icon" />
           <input
             type="text"
             placeholder="Search notifications..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            className="notification-search-input"
           />
         </div>
 
-        <div className="filter-container">
-          <div className="filter-group">
-            <label>Filter:</label>
+        <div className="notification-filter-container">
+          <div className="notification-filter-group">
+            <label className="notification-filter-label">Filter:</label>
             <select 
               value={selectedFilter} 
               onChange={(e) => setSelectedFilter(e.target.value)}
+              className="notification-filter-select"
             >
-              {filters.map(filter => (
-                <option key={filter} value={filter}>
-                  {filter.charAt(0).toUpperCase() + filter.slice(1)}
-                </option>
-              ))}
+              <option value="all">All</option>
+              <option value="unread">Unread</option>
+              <option value="important">Important</option>
             </select>
           </div>
 
-          <div className="filter-group">
-            <label>Type:</label>
+          <div className="notification-filter-group">
+            <label className="notification-filter-label">Type:</label>
             <select 
               value={selectedType} 
               onChange={(e) => setSelectedType(e.target.value)}
+              className="notification-filter-select"
             >
-              {types.map(type => (
-                <option key={type} value={type}>
-                  {getTypeName(type)}
-                </option>
-              ))}
+              <option value="all">All</option>
+              <option value="service">Service</option>
+              <option value="order">Order</option>
+              <option value="payment">Payment</option>
+              <option value="promotion">Promotion</option>
+              <option value="system">System</option>
             </select>
           </div>
 
           <button 
-            className="mark-all-btn"
+            className="notification-mark-all-btn"
             onClick={markAllAsRead}
             disabled={notifications.every(n => n.read)}
           >
@@ -184,49 +180,42 @@ const NotificationPage = () => {
           filteredNotifications.map(notification => (
             <div 
               key={notification.id} 
-              className={`notification-card ${notification.read ? '' : 'unread'} ${notification.important ? 'important' : ''}`}
+              className={`notification-card ${!notification.read ? 'notification-unread' : ''} ${notification.important ? 'notification-important' : ''}`}
             >
-              <div className="notification-type">
-                <span className="type-icon">{getTypeIcon(notification.type)}</span>
-                <span className="type-label">{getTypeName(notification.type)}</span>
+              <div className="notification-card-type">
+                <span className="notification-type-icon">{getTypeIcon(notification.type)}</span>
+                <span className="notification-type-label">{getTypeName(notification.type)}</span>
               </div>
               
-              <div className="notification-content">
-                <div className="notification-header">
-                  <h3>{notification.title}</h3>
-                  <div className="notification-meta">
-                    <span>{notification.date}</span>
-                    <span>{notification.time}</span>
+              <div className="notification-card-content">
+                <div className="notification-card-header">
+                  <h3 className="notification-card-title">{notification.title}</h3>
+                  <div className="notification-card-meta">
+                    <span className="notification-meta-date">{notification.date}</span>
+                    <span className="notification-meta-time">{notification.time}</span>
                   </div>
                 </div>
-                <p className="notification-message">{notification.message}</p>
+                <p className="notification-card-message">{notification.message}</p>
               </div>
               
-              <div className="notification-actions">
+              <div className="notification-card-actions">
                 {!notification.read && (
                   <button 
-                    className="action-btn mark-read"
+                    className="notification-action-btn notification-mark-read"
                     onClick={() => markAsRead(notification.id)}
                     title="Mark as read"
                   >
                     <FaCheck />
                   </button>
                 )}
-                <button 
-                  className="action-btn delete"
-                  onClick={() => deleteNotification(notification.id)}
-                  title="Delete notification"
-                >
-                  <FaTrash />
-                </button>
               </div>
             </div>
           ))
         ) : (
-          <div className="empty-state">
-            <FaRegBell className="empty-icon" />
-            <h3>No notifications found</h3>
-            <p>Try adjusting your filters or search term</p>
+          <div className="notification-empty-state">
+            <FaRegBell className="notification-empty-icon" />
+            <h3 className="notification-empty-title">No notifications found</h3>
+            <p className="notification-empty-text">Try adjusting your filters or search term</p>
           </div>
         )}
       </div>

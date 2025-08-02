@@ -11,18 +11,16 @@ const Checkout = () => {
     email: '',
     phone: '',
     address: '',
-    city: '',
+    city: 'Dhaka',
+    district: '',
     zipCode: '',
-    paymentMethod: 'credit',
-    cardNumber: '',
-    cardExpiry: '',
-    cardCVC: ''
+    paymentMethod: 'ssl'
   });
   const [orderSuccess, setOrderSuccess] = useState(false);
 
-  const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
-  const tax = totalPrice * 0.07; // 7% tax
-  const shipping = totalPrice > 100 ? 0 : 9.99; // Free shipping over $100
+  const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const tax = totalPrice * 0.05; // 5% VAT
+  const shipping = totalPrice > 5000 ? 0 : 300; // Free shipping over ৳5000
   const grandTotal = totalPrice + tax + shipping;
 
   const handleInputChange = (e) => {
@@ -45,6 +43,15 @@ const Checkout = () => {
 
   const removeFromCart = (partId) => {
     const updatedCart = cart.filter(item => item.id !== partId);
+    setCart(updatedCart);
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+  };
+
+  const updateQuantity = (partId, newQuantity) => {
+    if (newQuantity < 1) return;
+    const updatedCart = cart.map(item => 
+      item.id === partId ? { ...item, quantity: newQuantity } : item
+    );
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
   };
@@ -121,6 +128,8 @@ const Checkout = () => {
                   value={formData.phone}
                   onChange={handleInputChange}
                   required
+                  pattern="[0-9]{11}"
+                  placeholder="01XXXXXXXXX"
                 />
               </div>
             </div>
@@ -133,55 +142,68 @@ const Checkout = () => {
                 value={formData.address}
                 onChange={handleInputChange}
                 required
+                placeholder="House #, Road #, Area"
               />
             </div>
 
             <div className="form-row">
               <div className="form-group">
                 <label>City</label>
-                <input
-                  type="text"
+                <select
                   name="city"
                   value={formData.city}
                   onChange={handleInputChange}
                   required
-                />
+                >
+                  <option value="Dhaka">Dhaka</option>
+                  <option value="Chittagong">Chittagong</option>
+                  <option value="Sylhet">Sylhet</option>
+                  <option value="Rajshahi">Rajshahi</option>
+                  <option value="Khulna">Khulna</option>
+                  <option value="Barishal">Barishal</option>
+                  <option value="Rangpur">Rangpur</option>
+                  <option value="Mymensingh">Mymensingh</option>
+                </select>
               </div>
               <div className="form-group">
-                <label>ZIP Code</label>
+                <label>District</label>
                 <input
                   type="text"
-                  name="zipCode"
-                  value={formData.zipCode}
+                  name="district"
+                  value={formData.district}
                   onChange={handleInputChange}
                   required
                 />
               </div>
             </div>
 
+            <div className="form-group">
+              <label>ZIP Code</label>
+              <input
+                type="text"
+                name="zipCode"
+                value={formData.zipCode}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
             <h2>Payment Method</h2>
             <div className="payment-methods">
-              <label className="payment-method">
+              <label className={`payment-method ${formData.paymentMethod === 'ssl' ? 'selected' : ''}`}>
                 <input
                   type="radio"
                   name="paymentMethod"
-                  value="credit"
-                  checked={formData.paymentMethod === 'credit'}
+                  value="ssl"
+                  checked={formData.paymentMethod === 'ssl'}
                   onChange={handleInputChange}
                 />
-                <span>Credit Card</span>
+                <div className="payment-method-content">
+                  <span>SSL Commerz</span>
+                  <img src="https://www.sslcommerz.com/wp-content/uploads/2020/09/SSLCommerz-Logo-1.png" alt="SSL Commerz" />
+                </div>
               </label>
-              <label className="payment-method">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="paypal"
-                  checked={formData.paymentMethod === 'paypal'}
-                  onChange={handleInputChange}
-                />
-                <span>PayPal</span>
-              </label>
-              <label className="payment-method">
+              <label className={`payment-method ${formData.paymentMethod === 'cod' ? 'selected' : ''}`}>
                 <input
                   type="radio"
                   name="paymentMethod"
@@ -189,49 +211,12 @@ const Checkout = () => {
                   checked={formData.paymentMethod === 'cod'}
                   onChange={handleInputChange}
                 />
-                <span>Cash on Delivery</span>
+                <div className="payment-method-content">
+                  <span>Cash on Delivery</span>
+                  <img src="https://cdn-icons-png.flaticon.com/512/2703/2703634.png" alt="Cash on Delivery" />
+                </div>
               </label>
             </div>
-
-            {formData.paymentMethod === 'credit' && (
-              <div className="credit-card-form">
-                <div className="form-group">
-                  <label>Card Number</label>
-                  <input
-                    type="text"
-                    name="cardNumber"
-                    value={formData.cardNumber}
-                    onChange={handleInputChange}
-                    placeholder="1234 5678 9012 3456"
-                    required
-                  />
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Expiry Date</label>
-                    <input
-                      type="text"
-                      name="cardExpiry"
-                      value={formData.cardExpiry}
-                      onChange={handleInputChange}
-                      placeholder="MM/YY"
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>CVC</label>
-                    <input
-                      type="text"
-                      name="cardCVC"
-                      value={formData.cardCVC}
-                      onChange={handleInputChange}
-                      placeholder="123"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
 
             <button type="submit" className="place-order-btn">
               Place Order
@@ -244,11 +229,19 @@ const Checkout = () => {
           <div className="order-items">
             {cart.map(item => (
               <div key={item.id} className="order-item">
-                <div className="item-info">
-                  <span className="item-name">{item.name}</span>
-                  <span className="item-quantity">1 × ${item.price.toFixed(2)}</span>
+                <div className="item-image">
+                  <img src={item.image} alt={item.name} />
                 </div>
-                <span className="item-total">${item.price.toFixed(2)}</span>
+                <div className="item-details">
+                  <span className="item-name">{item.name}</span>
+                  <span className="item-quantity">{item.quantity} × ৳{item.price.toLocaleString()}</span>
+                  <div className="quantity-controls">
+                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                    <span>{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                  </div>
+                </div>
+                <span className="item-total">৳{(item.price * item.quantity).toLocaleString()}</span>
                 <button 
                   className="remove-item"
                   onClick={() => removeFromCart(item.id)}
@@ -262,19 +255,19 @@ const Checkout = () => {
           <div className="order-totals">
             <div className="total-row">
               <span>Subtotal</span>
-              <span>${totalPrice.toFixed(2)}</span>
+              <span>৳{totalPrice.toLocaleString()}</span>
             </div>
             <div className="total-row">
               <span>Shipping</span>
-              <span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span>
+              <span>{shipping === 0 ? 'Free' : `৳${shipping.toLocaleString()}`}</span>
             </div>
             <div className="total-row">
-              <span>Tax (7%)</span>
-              <span>${tax.toFixed(2)}</span>
+              <span>VAT (5%)</span>
+              <span>৳{tax.toLocaleString()}</span>
             </div>
             <div className="total-row grand-total">
               <span>Total</span>
-              <span>${grandTotal.toFixed(2)}</span>
+              <span>৳{grandTotal.toLocaleString()}</span>
             </div>
           </div>
         </div>

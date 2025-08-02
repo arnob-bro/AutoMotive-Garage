@@ -22,6 +22,12 @@ import AdminPaymentManagement from './components/Admin/AdminPaymentManagement/Ad
 import AdminEmployeeManagement from './components/Admin/AdminEmployeeManagement/AdminEmployeeManagement';
 import AdminUserManagement from './components/Admin/AdminUserManagement/AdminUserManagement';
 import NotificationPage from './components/NotificationPage/NotificationPage';
+import ManageReview from './components/Admin/ManageReview/ManageReview';
+import ContactSupport from './components/Admin/ContactSupport/ContactSupport';
+import FAQManagement from './components/Admin/ManageContents/FAQManagement/FAQManagement';
+import EducationalArticleManagement from './components/Admin/ManageContents/EducationalArticleManagement/EducationalArticleManagement';
+import PromotionalContentManagement from './components/Admin/ManageContents/PromotionalContentManagement/PromotionalContentManagement';
+
 
 function App() {
   return (
@@ -49,9 +55,12 @@ function App() {
             <Route path="admin-payments" element={<AdminPaymentManagement />} />
             <Route path="employees" element={<AdminEmployeeManagement />} />
             <Route path="users" element={<AdminUserManagement />} />
+            <Route path="reviews" element={<ManageReview />} />
+            <Route path="support" element={<ContactSupport />} />
+            <Route path="content/faq" element={<FAQManagement />} />
+            <Route path="content/articles" element={<EducationalArticleManagement />} />
+            <Route path="content/promotional" element={<PromotionalContentManagement />} />
           </Route>
-            
-
         </Routes>
       </div>
     </Router>

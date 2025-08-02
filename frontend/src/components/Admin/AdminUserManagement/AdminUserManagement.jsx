@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { 
   FaUser, FaEnvelope, FaPhone, FaCalendarAlt, 
-  FaSearch, FaEdit, FaTrash, FaFilter,
-  FaUserTie, FaUserCircle, FaInfoCircle,
-  FaCar, FaTools, FaMoneyBillWave
+  FaSearch, FaEdit, FaFilter, FaEllipsisV,
+  FaTools, FaMoneyBillWave, FaCar, FaInfoCircle
 } from 'react-icons/fa';
 import './AdminUserManagement.css';
 
@@ -15,22 +14,22 @@ const AdminUserManagement = () => {
       userId: 'USR-001',
       name: 'John Smith',
       email: 'john.smith@example.com',
-      phone: '(555) 123-4567',
-      role: 'customer',
+      phone: '+880 1712 345678',
       joinDate: '2022-01-15',
       lastLogin: '2023-06-10 09:45 AM',
+      address: '123 Road, Dhaka 1212, Bangladesh',
       vehicles: ['Toyota Corolla 2020', 'Honda CR-V 2018'],
       services: [
-        { id: 'SRV-101', date: '2023-01-10', type: 'Oil Change', cost: '$89.99', status: 'completed' },
-        { id: 'SRV-102', date: '2023-04-15', type: 'Tire Rotation', cost: '$49.99', status: 'completed' }
+        { id: 'SRV-101', date: '2023-01-10', type: 'Oil Change', cost: 'BDT 89.99', status: 'completed' },
+        { id: 'SRV-102', date: '2023-04-15', type: 'Tire Rotation', cost: 'BDT 49.99', status: 'completed' }
       ],
       parts: [
-        { id: 'PRT-201', date: '2023-02-20', name: 'Air Filter', cost: '$24.99', status: 'delivered' },
-        { id: 'PRT-202', date: '2023-05-05', name: 'Brake Pads', cost: '$79.99', status: 'delivered' }
+        { id: 'PRT-201', date: '2023-02-20', name: 'Air Filter', cost: 'BDT 24.99', status: 'delivered' },
+        { id: 'PRT-202', date: '2023-05-05', name: 'Brake Pads', cost: 'BDT 79.99', status: 'delivered' }
       ],
       payments: [
-        { id: 'PAY-301', date: '2023-01-10', amount: '$89.99', method: 'Credit Card' },
-        { id: 'PAY-302', date: '2023-02-20', amount: '$24.99', method: 'Credit Card' }
+        { id: 'PAY-301', date: '2023-01-10', amount: 'BDT 89.99', method: 'SSL Commerz' },
+        { id: 'PAY-302', date: '2023-02-20', amount: 'BDT 24.99', method: 'Cash on Delivery' }
       ]
     },
     {
@@ -38,17 +37,17 @@ const AdminUserManagement = () => {
       userId: 'USR-002',
       name: 'Sarah Johnson',
       email: 'sarah.j@example.com',
-      phone: '(555) 987-6543',
-      role: 'premium',
+      phone: '+880 1812 345678',
       joinDate: '2022-03-22',
       lastLogin: '2023-06-10 02:30 PM',
+      address: '456 Avenue, Chittagong 4000, Bangladesh',
       vehicles: ['Ford F-150 2021'],
       services: [
-        { id: 'SRV-103', date: '2023-03-18', type: 'Full Service', cost: '$249.99', status: 'completed' }
+        { id: 'SRV-103', date: '2023-03-18', type: 'Full Service', cost: 'BDT 249.99', status: 'completed' }
       ],
       parts: [],
       payments: [
-        { id: 'PAY-303', date: '2023-03-18', amount: '$249.99', method: 'PayPal' }
+        { id: 'PAY-303', date: '2023-03-18', amount: 'BDT 249.99', method: 'SSL Commerz' }
       ]
     },
     {
@@ -56,21 +55,21 @@ const AdminUserManagement = () => {
       userId: 'USR-003',
       name: 'Michael Chen',
       email: 'michael.c@example.com',
-      phone: '(555) 456-7890',
-      role: 'premium',
+      phone: '+880 1912 345678',
       joinDate: '2022-05-10',
       lastLogin: '2023-06-10 11:15 AM',
+      address: '789 Lane, Sylhet 3100, Bangladesh',
       vehicles: ['Tesla Model 3 2022', 'BMW X5 2020'],
       services: [
-        { id: 'SRV-104', date: '2023-01-25', type: 'Battery Check', cost: '$39.99', status: 'completed' },
-        { id: 'SRV-105', date: '2023-05-20', type: 'Wheel Alignment', cost: '$89.99', status: 'completed' }
+        { id: 'SRV-104', date: '2023-01-25', type: 'Battery Check', cost: 'BDT 39.99', status: 'completed' },
+        { id: 'SRV-105', date: '2023-05-20', type: 'Wheel Alignment', cost: 'BDT 89.99', status: 'completed' }
       ],
       parts: [
-        { id: 'PRT-203', date: '2023-05-20', name: 'Wheel Bearings', cost: '$129.99', status: 'delivered' }
+        { id: 'PRT-203', date: '2023-05-20', name: 'Wheel Bearings', cost: 'BDT 129.99', status: 'delivered' }
       ],
       payments: [
-        { id: 'PAY-304', date: '2023-01-25', amount: '$39.99', method: 'Credit Card' },
-        { id: 'PAY-305', date: '2023-05-20', amount: '$219.98', method: 'Credit Card' }
+        { id: 'PAY-304', date: '2023-01-25', amount: 'BDT 39.99', method: 'SSL Commerz' },
+        { id: 'PAY-305', date: '2023-05-20', amount: 'BDT 219.98', method: 'Cash on Delivery' }
       ]
     },
     {
@@ -78,10 +77,10 @@ const AdminUserManagement = () => {
       userId: 'USR-004',
       name: 'Robert Williams',
       email: 'robert.w@example.com',
-      phone: '(555) 789-0123',
-      role: 'customer',
+      phone: '+880 1612 345678',
       joinDate: '2022-07-18',
       lastLogin: '2023-05-05 03:00 PM',
+      address: '321 Street, Khulna 9000, Bangladesh',
       vehicles: [],
       services: [],
       parts: [],
@@ -92,41 +91,35 @@ const AdminUserManagement = () => {
       userId: 'USR-005',
       name: 'Emily Davis',
       email: 'emily.d@example.com',
-      phone: '(555) 234-5678',
-      role: 'customer',
+      phone: '+880 1512 345678',
       joinDate: '2022-09-05',
       lastLogin: '2023-06-08 08:30 AM',
+      address: '654 Boulevard, Rajshahi 6000, Bangladesh',
       vehicles: ['Chevrolet Silverado 2020'],
       services: [],
       parts: [
-        { id: 'PRT-204', date: '2023-04-10', name: 'Oil Filter', cost: '$19.99', status: 'delivered' }
+        { id: 'PRT-204', date: '2023-04-10', name: 'Oil Filter', cost: 'BDT 19.99', status: 'delivered' }
       ],
       payments: [
-        { id: 'PAY-306', date: '2023-04-10', amount: '$19.99', method: 'Debit Card' }
+        { id: 'PAY-306', date: '2023-04-10', amount: 'BDT 19.99', method: 'Cash on Delivery' }
       ]
     }
   ];
 
   const [users, setUsers] = useState(allUsers);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedRole, setSelectedRole] = useState('all');
-  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [selectedActivity, setSelectedActivity] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [editedUser, setEditedUser] = useState({
     name: '',
     email: '',
-    phone: '',
-    role: 'customer'
+    phone: ''
   });
 
-  // Available roles (removed 'admin' as per requirement)
-  const roles = ['customer', 'premium'];
-  
-  // Available filters for services/parts
-  const filters = ['all', 'has-services', 'has-parts', 'no-activity'];
+  // Available activity filters
+  const activityOptions = ['has-services', 'has-parts', 'no-activity'];
 
   // Filter users based on search and filters
   const filterUsers = () => {
@@ -142,24 +135,13 @@ const AdminUserManagement = () => {
       );
     }
     
-    if (selectedRole !== 'all') {
-      filtered = filtered.filter(user => user.role === selectedRole);
-    }
-    
-    if (selectedFilter !== 'all') {
-      switch(selectedFilter) {
-        case 'has-services':
-          filtered = filtered.filter(user => user.services.length > 0);
-          break;
-        case 'has-parts':
-          filtered = filtered.filter(user => user.parts.length > 0);
-          break;
-        case 'no-activity':
-          filtered = filtered.filter(user => user.services.length === 0 && user.parts.length === 0);
-          break;
-        default:
-          break;
-      }
+    if (selectedActivity.length > 0) {
+      filtered = filtered.filter(user => {
+        if (selectedActivity.includes('has-services') && user.services.length === 0) return false;
+        if (selectedActivity.includes('has-parts') && user.parts.length === 0) return false;
+        if (selectedActivity.includes('no-activity') && (user.services.length > 0 || user.parts.length > 0)) return false;
+        return true;
+      });
     }
     
     return filtered;
@@ -169,12 +151,12 @@ const AdminUserManagement = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleRoleFilter = (role) => {
-    setSelectedRole(role);
-  };
-
   const handleActivityFilter = (filter) => {
-    setSelectedFilter(filter);
+    setSelectedActivity(prev => 
+      prev.includes(filter) 
+        ? prev.filter(f => f !== filter)
+        : [...prev, filter]
+    );
   };
 
   const openEditModal = (user) => {
@@ -182,15 +164,9 @@ const AdminUserManagement = () => {
     setEditedUser({
       name: user.name,
       email: user.email,
-      phone: user.phone,
-      role: user.role
+      phone: user.phone
     });
     setShowEditModal(true);
-  };
-
-  const openDeleteModal = (user) => {
-    setSelectedUser(user);
-    setShowDeleteModal(true);
   };
 
   const openDetailsModal = (user) => {
@@ -215,21 +191,6 @@ const AdminUserManagement = () => {
     setShowEditModal(false);
   };
 
-  const deleteUser = () => {
-    const updatedUsers = allUsers.filter(u => u.id !== selectedUser.id);
-    setUsers(updatedUsers);
-    setShowDeleteModal(false);
-  };
-
-  const getRoleIcon = (role) => {
-    switch(role) {
-      case 'premium':
-        return <FaUserTie className="aum-role-icon" />;
-      default:
-        return <FaUserCircle className="aum-role-icon" />;
-    }
-  };
-
   const getActivityStatus = (user) => {
     if (user.services.length > 0 && user.parts.length > 0) {
       return 'Services & Parts';
@@ -251,60 +212,7 @@ const AdminUserManagement = () => {
         </div>
 
         <div className="aum-controls">
-          <div className="aum-filters">
-            <div className="aum-filter-group">
-              <label>Filter by Role:</label>
-              <div className="aum-filter-buttons">
-                <button 
-                  className={`aum-filter-btn ${selectedRole === 'all' ? 'active' : ''}`}
-                  onClick={() => handleRoleFilter('all')}
-                >
-                  All Roles
-                </button>
-                {roles.map(role => (
-                  <button
-                    key={role}
-                    className={`aum-filter-btn ${selectedRole === role ? 'active' : ''}`}
-                    onClick={() => handleRoleFilter(role)}
-                  >
-                    {role.charAt(0).toUpperCase() + role.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="aum-filter-group">
-              <label>Filter by Activity:</label>
-              <div className="aum-filter-buttons">
-                <button 
-                  className={`aum-filter-btn ${selectedFilter === 'all' ? 'active' : ''}`}
-                  onClick={() => handleActivityFilter('all')}
-                >
-                  All Customers
-                </button>
-                <button
-                  className={`aum-filter-btn ${selectedFilter === 'has-services' ? 'active' : ''}`}
-                  onClick={() => handleActivityFilter('has-services')}
-                >
-                  With Services
-                </button>
-                <button
-                  className={`aum-filter-btn ${selectedFilter === 'has-parts' ? 'active' : ''}`}
-                  onClick={() => handleActivityFilter('has-parts')}
-                >
-                  With Parts
-                </button>
-                <button
-                  className={`aum-filter-btn ${selectedFilter === 'no-activity' ? 'active' : ''}`}
-                  onClick={() => handleActivityFilter('no-activity')}
-                >
-                  No Activity
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="aum-search">
+          <div className="aum-search-filters">
             <div className="aum-search-box">
               <FaSearch className="aum-search-icon" />
               <input
@@ -315,97 +223,89 @@ const AdminUserManagement = () => {
                 className="aum-search-input"
               />
             </div>
+            
+            <div className="aum-filter-group">
+              <div className="aum-filter-dropdown">
+                <FaFilter className="aum-filter-icon" />
+                <select
+                  value={selectedActivity}
+                  onChange={(e) => handleActivityFilter(e.target.value)}
+                  multiple={false}
+                  className="aum-filter-select"
+                >
+                  <option value="">Filter by Activity</option>
+                  {activityOptions.map(activity => (
+                    <option key={activity} value={activity}>
+                      {activity === 'has-services' ? 'With Services' : 
+                       activity === 'has-parts' ? 'With Parts' : 'No Activity'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="aum-users-table-container">
-          <div className="aum-users-table">
-            <div className="aum-table-header">
-              <div className="aum-table-row">
-                <div className="aum-table-col aum-col-id">Customer ID</div>
-                <div className="aum-table-col aum-col-name">Name</div>
-                <div className="aum-table-col aum-col-contact">Contact</div>
-                <div className="aum-table-col aum-col-role">Role</div>
-                <div className="aum-table-col aum-col-vehicles">Vehicles</div>
-                <div className="aum-table-col aum-col-activity">Activity</div>
-                <div className="aum-table-col aum-col-join-date">Join Date</div>
-                <div className="aum-table-col aum-col-actions">Actions</div>
-              </div>
-            </div>
-            
-            <div className="aum-table-body">
+          <table className="aum-users-table">
+            <thead>
+              <tr>
+                <th>Customer ID</th>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Activity</th>
+                <th>Join Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
               {filterUsers().length > 0 ? (
                 filterUsers().map(user => (
-                  <div key={user.id} className="aum-table-row">
-                    <div className="aum-table-col aum-col-id">
-                      <span className="aum-user-id">{user.userId}</span>
-                    </div>
-                    <div className="aum-table-col aum-col-name">
+                  <tr key={user.id} onClick={() => openDetailsModal(user)}>
+                    <td className="aum-user-id">{user.userId}</td>
+                    <td>
                       <div className="aum-user-name">{user.name}</div>
                       <div className="aum-user-email">{user.email}</div>
-                    </div>
-                    <div className="aum-table-col aum-col-contact">
-                      {user.phone}
-                    </div>
-                    <div className="aum-table-col aum-col-role">
-                      <div className="aum-role-badge">
-                        {getRoleIcon(user.role)}
-                        <span>{user.role.charAt(0).toUpperCase() + user.role.slice(1)}</span>
-                      </div>
-                    </div>
-                    <div className="aum-table-col aum-col-vehicles">
-                      <div className="aum-vehicles-list">
-                        {user.vehicles.length > 0 ? (
-                          user.vehicles.map((vehicle, index) => (
-                            <span key={index} className="aum-vehicle-badge">
-                              {vehicle}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="aum-no-vehicles">No vehicles</span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="aum-table-col aum-col-activity">
+                    </td>
+                    <td>{user.phone}</td>
+                    <td>
                       <div className={`aum-activity-badge aum-${getActivityStatus(user).toLowerCase().replace(' ', '-')}`}>
                         {getActivityStatus(user)}
                       </div>
-                    </div>
-                    <div className="aum-table-col aum-col-join-date">
-                      {user.joinDate}
-                    </div>
-                    <div className="aum-table-col aum-col-actions">
-                      <button 
-                        className="aum-action-btn aum-details-btn"
-                        onClick={() => openDetailsModal(user)}
-                      >
-                        <FaInfoCircle className="aum-action-icon" />
-                        Details
-                      </button>
-                      <button 
-                        className="aum-action-btn aum-edit-btn"
-                        onClick={() => openEditModal(user)}
-                      >
-                        <FaEdit className="aum-action-icon" />
-                        Edit
-                      </button>
-                      <button 
-                        className="aum-action-btn aum-delete-btn"
-                        onClick={() => openDeleteModal(user)}
-                      >
-                        <FaTrash className="aum-action-icon" />
-                        Delete
-                      </button>
-                    </div>
-                  </div>
+                    </td>
+                    <td>{user.joinDate}</td>
+                    <td className="aum-actions" onClick={(e) => e.stopPropagation()}>
+                      <div className="aum-action-menu">
+                        <button 
+                          className="aum-menu-toggle"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedUser(user);
+                          }}
+                        >
+                          <FaEllipsisV />
+                        </button>
+                        <div className="aum-menu-dropdown">
+                          <button onClick={() => openDetailsModal(user)}>
+                            <FaInfoCircle /> Details
+                          </button>
+                          <button onClick={() => openEditModal(user)}>
+                            <FaEdit /> Edit
+                          </button>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
                 ))
               ) : (
-                <div className="aum-no-users">
-                  <p>No customers found matching your criteria</p>
-                </div>
+                <tr className="aum-no-users">
+                  <td colSpan="6">
+                    <p>No customers found matching your criteria</p>
+                  </td>
+                </tr>
               )}
-            </div>
-          </div>
+            </tbody>
+          </table>
         </div>
 
         {/* Edit User Modal */}
@@ -456,20 +356,6 @@ const AdminUserManagement = () => {
                     placeholder="Enter phone number"
                   />
                 </div>
-                <div className="aum-form-group">
-                  <label>Role</label>
-                  <select
-                    name="role"
-                    value={editedUser.role}
-                    onChange={handleInputChange}
-                  >
-                    {roles.map(role => (
-                      <option key={role} value={role}>
-                        {role.charAt(0).toUpperCase() + role.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
               <div className="aum-modal-footer">
                 <button 
@@ -484,48 +370,6 @@ const AdminUserManagement = () => {
                   disabled={!editedUser.name || !editedUser.email}
                 >
                   Save Changes
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Delete Confirmation Modal */}
-        {showDeleteModal && selectedUser && (
-          <div className="aum-modal-overlay">
-            <div className="aum-modal aum-delete-modal">
-              <div className="aum-modal-header">
-                <h3>Confirm Deletion</h3>
-                <button 
-                  className="aum-modal-close"
-                  onClick={() => setShowDeleteModal(false)}
-                >
-                  &times;
-                </button>
-              </div>
-              <div className="aum-modal-body">
-                <p>Are you sure you want to delete this customer?</p>
-                <div className="aum-user-to-delete">
-                  <p><strong>Name:</strong> {selectedUser.name}</p>
-                  <p><strong>Role:</strong> {selectedUser.role.charAt(0).toUpperCase() + selectedUser.role.slice(1)}</p>
-                  <p><strong>Activity:</strong> {getActivityStatus(selectedUser)}</p>
-                </div>
-                <p className="aum-delete-warning">
-                  This action cannot be undone. All customer data will be permanently removed.
-                </p>
-              </div>
-              <div className="aum-modal-footer">
-                <button 
-                  className="aum-btn aum-cancel-btn"
-                  onClick={() => setShowDeleteModal(false)}
-                >
-                  Cancel
-                </button>
-                <button 
-                  className="aum-btn aum-delete-confirm-btn"
-                  onClick={deleteUser}
-                >
-                  Delete Permanently
                 </button>
               </div>
             </div>
@@ -552,11 +396,10 @@ const AdminUserManagement = () => {
                     <p>{selectedUser.email} | {selectedUser.phone}</p>
                     <div className="aum-details-meta">
                       <span className="aum-user-id">{selectedUser.userId}</span>
-                      <span className="aum-role-badge">
-                        {getRoleIcon(selectedUser.role)}
-                        {selectedUser.role.charAt(0).toUpperCase() + selectedUser.role.slice(1)}
-                      </span>
                       <span>Joined: {selectedUser.joinDate}</span>
+                    </div>
+                    <div className="aum-user-address">
+                      {selectedUser.address}
                     </div>
                   </div>
                 </div>

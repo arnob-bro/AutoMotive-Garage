@@ -21,12 +21,12 @@ const About = () => {
       alt: 'Car interior service',
       caption: 'Interior Detailing'
     },
-    {
-      id: 4,
-      src: 'https://images.unsplash.com/photo-1494976388901-7509ad7062f4',
-      alt: 'Sports car in workshop',
-      caption: 'Performance Tuning'
-    },
+    // {
+    //   id: 4,
+    //   src: 'https://images.unsplash.com/photo-1494976388901-7509ad7062f4',
+    //   alt: 'Sports car in workshop',
+    //   caption: 'Performance Tuning'
+    // },
     {
       id: 5,
       src: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70',

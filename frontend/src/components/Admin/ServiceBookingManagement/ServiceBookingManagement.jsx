@@ -20,9 +20,10 @@ const ServiceBookingManagement = () => {
       time: '09:30 AM',
       status: 'confirmed',
       paymentStatus: 'paid',
-      assignedTo: 'Mechanic 1',
+      paymentMethod: 'SSL Commerz',
       total: 109.98,
-      duration: '1 hour 15 mins'
+      duration: '1 hour 15 mins',
+      address: '123 Road, Dhaka 1212, Bangladesh'
     },
     {
       id: 2,
@@ -34,9 +35,10 @@ const ServiceBookingManagement = () => {
       time: '11:00 AM',
       status: 'in-progress',
       paymentStatus: 'paid',
-      assignedTo: 'Mechanic 2',
+      paymentMethod: 'Cash on Delivery',
       total: 169.98,
-      duration: '2 hours'
+      duration: '2 hours',
+      address: '456 Avenue, Chittagong 4000, Bangladesh'
     },
     {
       id: 3,
@@ -48,9 +50,10 @@ const ServiceBookingManagement = () => {
       time: '02:00 PM',
       status: 'pending',
       paymentStatus: 'pending',
-      assignedTo: '',
+      paymentMethod: 'SSL Commerz',
       total: 199.99,
-      duration: '2 hours'
+      duration: '2 hours',
+      address: '789 Street, Sylhet 3100, Bangladesh'
     },
     {
       id: 4,
@@ -62,9 +65,10 @@ const ServiceBookingManagement = () => {
       time: '10:00 AM',
       status: 'completed',
       paymentStatus: 'paid',
-      assignedTo: 'Mechanic 3',
+      paymentMethod: 'SSL Commerz',
       total: 249.99,
-      duration: '3 hours'
+      duration: '3 hours',
+      address: '321 Lane, Khulna 9000, Bangladesh'
     },
     {
       id: 5,
@@ -74,11 +78,12 @@ const ServiceBookingManagement = () => {
       services: ['Transmission Flush', 'Battery Service'],
       date: '2023-06-19',
       time: '03:30 PM',
-      status: 'completed',
-      paymentStatus: 'paid',
-      assignedTo: 'Mechanic 1',
+      status: 'cancelled',
+      paymentStatus: 'refunded',
+      paymentMethod: 'SSL Commerz',
       total: 319.98,
-      duration: '2 hours 30 mins'
+      duration: '2 hours 30 mins',
+      address: '654 Boulevard, Rajshahi 6000, Bangladesh'
     }
   ];
 
@@ -86,12 +91,7 @@ const ServiceBookingManagement = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const [showAssignModal, setShowAssignModal] = useState(false);
-  const [selectedMechanic, setSelectedMechanic] = useState('');
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-
-  // Available mechanics
-  const mechanics = ['Mechanic 1', 'Mechanic 2', 'Mechanic 3', 'Mechanic 4'];
 
   useEffect(() => {
     // Filter bookings based on active tab and search term
@@ -99,6 +99,8 @@ const ServiceBookingManagement = () => {
     
     if (activeTab === 'completed') {
       filtered = filtered.filter(booking => booking.status === 'completed');
+    } else if (activeTab === 'cancelled') {
+      filtered = filtered.filter(booking => booking.status === 'cancelled');
     } else if (activeTab !== 'all') {
       filtered = filtered.filter(booking => booking.status === activeTab);
     }
@@ -114,24 +116,6 @@ const ServiceBookingManagement = () => {
     
     setBookings(filtered);
   }, [activeTab, searchTerm]);
-
-  const handleAssignMechanic = (booking) => {
-    setSelectedBooking(booking);
-    setSelectedMechanic(booking.assignedTo || '');
-    setShowAssignModal(true);
-  };
-
-  const confirmAssignment = () => {
-    const updatedBookings = allBookings.map(booking => 
-      booking.id === selectedBooking.id 
-        ? { ...booking, assignedTo: selectedMechanic, status: 'confirmed' } 
-        : booking
-    );
-    
-    setBookings(updatedBookings);
-    setShowAssignModal(false);
-    setSelectedBooking(null);
-  };
 
   const updateBookingStatus = (bookingId, newStatus) => {
     const updatedBookings = allBookings.map(booking => 
@@ -158,6 +142,8 @@ const ServiceBookingManagement = () => {
         return <FaCheckCircle className="sbm-status-icon sbm-confirmed" />;
       case 'pending':
         return <FaTimes className="sbm-status-icon sbm-pending" />;
+      case 'cancelled':
+        return <FaTimes className="sbm-status-icon sbm-cancelled" />;
       default:
         return <FaTimes className="sbm-status-icon sbm-unknown" />;
     }
@@ -168,7 +154,8 @@ const ServiceBookingManagement = () => {
     confirmed: allBookings.filter(b => b.status === 'confirmed').length,
     'in-progress': allBookings.filter(b => b.status === 'in-progress').length,
     completed: allBookings.filter(b => b.status === 'completed').length,
-    pending: allBookings.filter(b => b.status === 'pending').length
+    pending: allBookings.filter(b => b.status === 'pending').length,
+    cancelled: allBookings.filter(b => b.status === 'cancelled').length
   };
 
   return (
@@ -176,7 +163,7 @@ const ServiceBookingManagement = () => {
       <div className="sbm-content-container">
         <div className="sbm-header">
           <h2 className="sbm-title">Service Bookings Management</h2>
-          <p className="sbm-subtitle">Manage all customer service bookings and assignments</p>
+          <p className="sbm-subtitle">Manage all customer service bookings</p>
         </div>
 
         <div className="sbm-controls">
@@ -211,6 +198,12 @@ const ServiceBookingManagement = () => {
             >
               Pending ({statusCounts.pending})
             </button>
+            <button
+              className={`sbm-tab ${activeTab === 'cancelled' ? 'active' : ''}`}
+              onClick={() => setActiveTab('cancelled')}
+            >
+              Cancelled ({statusCounts.cancelled})
+            </button>
           </div>
           
           <div className="sbm-search-filter">
@@ -238,7 +231,6 @@ const ServiceBookingManagement = () => {
                 <div className="sbm-table-col sbm-col-date">Date & Time</div>
                 <div className="sbm-table-col sbm-col-status">Status</div>
                 <div className="sbm-table-col sbm-col-payment">Payment</div>
-                <div className="sbm-table-col sbm-col-mechanic">Mechanic</div>
                 <div className="sbm-table-col sbm-col-actions">Actions</div>
               </div>
             </div>
@@ -272,11 +264,8 @@ const ServiceBookingManagement = () => {
                     <div className="sbm-table-col sbm-col-payment">
                       <div className={`sbm-payment-badge sbm-${booking.paymentStatus}`}>
                         <FaDollarSign className="sbm-payment-icon" />
-                        <span>{booking.paymentStatus}</span>
+                        <span>{booking.paymentMethod} ({booking.paymentStatus})</span>
                       </div>
-                    </div>
-                    <div className="sbm-table-col sbm-col-mechanic">
-                      {booking.assignedTo || 'Unassigned'}
                     </div>
                     <div className="sbm-table-col sbm-col-actions">
                       <button 
@@ -285,15 +274,6 @@ const ServiceBookingManagement = () => {
                       >
                         View
                       </button>
-                      {booking.status !== 'completed' && (
-                        <button 
-                          className="sbm-action-btn sbm-assign-btn"
-                          onClick={() => handleAssignMechanic(booking)}
-                        >
-                          <FaUserCog className="sbm-assign-icon" />
-                          Assign
-                        </button>
-                      )}
                     </div>
                   </div>
                 ))
@@ -305,60 +285,6 @@ const ServiceBookingManagement = () => {
             </div>
           </div>
         </div>
-
-        {/* Assign Mechanic Modal */}
-        {showAssignModal && selectedBooking && (
-          <div className="sbm-modal-overlay">
-            <div className="sbm-modal">
-              <div className="sbm-modal-header">
-                <h3>Assign Mechanic</h3>
-                <button 
-                  className="sbm-modal-close"
-                  onClick={() => setShowAssignModal(false)}
-                >
-                  <FaTimes />
-                </button>
-              </div>
-              <div className="sbm-modal-body">
-                <div className="sbm-assign-info">
-                  <p><strong>Booking ID:</strong> {selectedBooking.bookingId}</p>
-                  <p><strong>Customer:</strong> {selectedBooking.customer}</p>
-                  <p><strong>Vehicle:</strong> {selectedBooking.vehicle}</p>
-                  <p><strong>Services:</strong> {selectedBooking.services.join(', ')}</p>
-                </div>
-                
-                <div className="sbm-form-group">
-                  <label>Select Mechanic:</label>
-                  <select
-                    value={selectedMechanic}
-                    onChange={(e) => setSelectedMechanic(e.target.value)}
-                    className="sbm-mechanic-select"
-                  >
-                    <option value="">Select Mechanic</option>
-                    {mechanics.map(mechanic => (
-                      <option key={mechanic} value={mechanic}>{mechanic}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="sbm-modal-footer">
-                <button 
-                  className="sbm-btn sbm-cancel-btn"
-                  onClick={() => setShowAssignModal(false)}
-                >
-                  Cancel
-                </button>
-                <button 
-                  className="sbm-btn sbm-confirm-btn"
-                  onClick={confirmAssignment}
-                  disabled={!selectedMechanic}
-                >
-                  Confirm Assignment
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Booking Details Modal */}
         {showDetailsModal && selectedBooking && (
@@ -390,6 +316,10 @@ const ServiceBookingManagement = () => {
                     </span>
                   </div>
                   <div className="sbm-detail-item">
+                    <span className="sbm-detail-label">Address:</span>
+                    <span className="sbm-detail-value">{selectedBooking.address}</span>
+                  </div>
+                  <div className="sbm-detail-item">
                     <span className="sbm-detail-label">Date & Time:</span>
                     <span className="sbm-detail-value">
                       <FaCalendarAlt className="sbm-detail-icon" /> 
@@ -410,14 +340,8 @@ const ServiceBookingManagement = () => {
                     <span className="sbm-detail-value">
                       <div className={`sbm-payment-badge sbm-${selectedBooking.paymentStatus}`}>
                         <FaDollarSign className="sbm-payment-icon" />
-                        <span>{selectedBooking.paymentStatus}</span>
+                        <span>{selectedBooking.paymentMethod} ({selectedBooking.paymentStatus})</span>
                       </div>
-                    </span>
-                  </div>
-                  <div className="sbm-detail-item">
-                    <span className="sbm-detail-label">Assigned Mechanic:</span>
-                    <span className="sbm-detail-value">
-                      {selectedBooking.assignedTo || 'Not assigned'}
                     </span>
                   </div>
                   <div className="sbm-detail-item">
@@ -438,7 +362,7 @@ const ServiceBookingManagement = () => {
                   <div className="sbm-detail-item">
                     <span className="sbm-detail-label">Total Amount:</span>
                     <span className="sbm-detail-value sbm-total-amount">
-                      ${selectedBooking.total.toFixed(2)}
+                      BDT {selectedBooking.total.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -475,6 +399,17 @@ const ServiceBookingManagement = () => {
                     }}
                   >
                     Mark as Completed
+                  </button>
+                )}
+                {selectedBooking.status !== 'cancelled' && (
+                  <button 
+                    className="sbm-btn sbm-cancel-btn"
+                    onClick={() => {
+                      updateBookingStatus(selectedBooking.id, 'cancelled');
+                      setShowDetailsModal(false);
+                    }}
+                  >
+                    Cancel Booking
                   </button>
                 )}
                 <button 
