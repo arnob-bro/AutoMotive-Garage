@@ -1,10 +1,28 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
+import useUserStore from "../../stores/userStore";
 import './login.css';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login} = useUserStore();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    
+    try {
+      // console.log('Logging in with:', { email, password });
+      const result = await login(email, password);
+      if(result.success){
+        navigate("/");
+      }
+    } catch (err) {
+      
+    } 
+  };
 
   return (
     <div className="auth-container login-container">
@@ -14,7 +32,7 @@ const Login = () => {
           <p>Sign in to your AutoMotive Pro account</p>
         </div>
 
-        <form className="auth-form">
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input

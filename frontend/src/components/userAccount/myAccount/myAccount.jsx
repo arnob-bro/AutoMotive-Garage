@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useLocation, Outlet } from 'react-router-dom';
 import { FaUser, FaHistory, FaShoppingBag, FaCreditCard, FaStar, FaQuestionCircle, FaSignOutAlt, FaCar } from 'react-icons/fa';
 import { MdOutlineEdit } from 'react-icons/md';
@@ -7,12 +7,31 @@ import ServiceHistory from '../serviceHistory/ServiceHistory';
 import PartsPurchase from '../partsPurchaseHistory/PartsPurchase'; 
 import PaymentHistory from '../paymentHistory/PaymentHistory';
 import SubmitReview from '../submitReview/SubmitReview';
+import AuthApi from '../../../apis/authApi';
+// import useUserStore from '../../../stores/userStore';
 import FAQ from '../faq/FAQ';
 import './myAccount.css';
+const authApi = new AuthApi();
 
 const MyAccount = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [user, setUser] = useState({});
   const location = useLocation();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await authApi.getProfile(); 
+        setUser(response.user);
+      } catch (err) {
+        console.error('Failed to fetch user data:', err);
+      } finally {
+        
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   // Sample user data
   const userData = {
@@ -61,10 +80,10 @@ const MyAccount = () => {
             </button>
           </div>
           <div className="user-info">
-            <h2>{userData.name}</h2>
-            <p>{userData.email}</p>
-            <p>{userData.phone}</p>
-            <p className="join-date">Member since {userData.joinDate}</p>
+            <h2>{user.name}</h2>
+            <p>{user.email}</p>
+            <p>{user.phone}</p>
+            <p className="join-date">Member since {user.created_at}</p>
           </div>
         </div>
 

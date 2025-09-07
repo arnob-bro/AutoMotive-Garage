@@ -1,18 +1,39 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
+import AuthApi from '../../apis/authApi';
+const authApi = new AuthApi();
 import './login.css';
 
 const Register = () => {
+  
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    
+    try {
+      
+      const result = await authApi.register(formData);
+      if(result.success){
+        navigate("/login");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      
+    }
   };
 
   return (
@@ -23,7 +44,7 @@ const Register = () => {
           <p>Create your account in minutes</p>
         </div>
 
-        <form className="auth-form">
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
             <label htmlFor="name">Full Name</label>
             <input

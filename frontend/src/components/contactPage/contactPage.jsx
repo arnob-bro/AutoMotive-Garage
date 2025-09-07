@@ -4,14 +4,15 @@ import {
   faMapMarkerAlt, 
   faPhoneAlt, 
   faEnvelope, 
-  faClock,
-  faBuilding,
-  faHeadset
+  faClock
 } from '@fortawesome/free-solid-svg-icons';
+import ContactApi from '../../apis/contactApi';
 import './contactPage.css';
 
+const contactApi = new ContactApi();
+
 const ContactPage = () => {
-  const [formData, setFormData] = useState({
+  const [inquiryData, setInquiryData] = useState({
     name: '',
     email: '',
     phone: '',
@@ -20,30 +21,35 @@ const ContactPage = () => {
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+    setInquiryData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In a real app, you would send this data to your backend
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: ''
-    });
-    
-    // Reset submission status after 3 seconds
-    setTimeout(() => setSubmitted(false), 3000);
+    setError(null);
+
+    try {
+      const response = await contactApi.makeInquiry(inquiryData);
+      if (!response.success) throw new Error(response.error || "Inquiry not sent");
+
+      setSubmitted(true);
+      setInquiryData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+      });
+
+      // Reset submission status after 3 seconds
+      setTimeout(() => setSubmitted(false), 3000);
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    }
   };
 
   return (
@@ -58,12 +64,10 @@ const ContactPage = () => {
       <div className="contact-container">
         <div className="contact-info">
           <h2>Our Contact Details</h2>
-          
+
           <div className="info-item">
-            <div className="info-icon">
-              <FontAwesomeIcon icon={faMapMarkerAlt} className="icon" />
-            </div>
-            <div className="info-content">
+            <FontAwesomeIcon icon={faMapMarkerAlt} className="icon" />
+            <div>
               <h3>Visit Us</h3>
               <p>123 Auto Service Road</p>
               <p>Dhaka 1205, Bangladesh</p>
@@ -71,10 +75,8 @@ const ContactPage = () => {
           </div>
 
           <div className="info-item">
-            <div className="info-icon">
-              <FontAwesomeIcon icon={faPhoneAlt} className="icon" />
-            </div>
-            <div className="info-content">
+            <FontAwesomeIcon icon={faPhoneAlt} className="icon" />
+            <div>
               <h3>Call Us</h3>
               <p>+880 1234 567890</p>
               <p>+880 9876 543210</p>
@@ -82,10 +84,8 @@ const ContactPage = () => {
           </div>
 
           <div className="info-item">
-            <div className="info-icon">
-              <FontAwesomeIcon icon={faEnvelope} className="icon" />
-            </div>
-            <div className="info-content">
+            <FontAwesomeIcon icon={faEnvelope} className="icon" />
+            <div>
               <h3>Email Us</h3>
               <p>info@automotivegarage.com</p>
               <p>support@automotivegarage.com</p>
@@ -93,10 +93,8 @@ const ContactPage = () => {
           </div>
 
           <div className="info-item">
-            <div className="info-icon">
-              <FontAwesomeIcon icon={faClock} className="icon" />
-            </div>
-            <div className="info-content">
+            <FontAwesomeIcon icon={faClock} className="icon" />
+            <div>
               <h3>Working Hours</h3>
               <p>Monday - Saturday: 8:00 AM - 8:00 PM</p>
               <p>Sunday: 10:00 AM - 6:00 PM</p>
@@ -106,11 +104,19 @@ const ContactPage = () => {
 
         <div className="contact-form">
           <h2>Send Us a Message</h2>
+
           {submitted && (
             <div className="success-message">
               Thank you for your message! We'll get back to you soon.
             </div>
           )}
+
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="name">Full Name</label>
@@ -118,7 +124,7 @@ const ContactPage = () => {
                 type="text"
                 id="name"
                 name="name"
-                value={formData.name}
+                value={inquiryData.name}
                 onChange={handleChange}
                 required
               />
@@ -131,7 +137,7 @@ const ContactPage = () => {
                   type="email"
                   id="email"
                   name="email"
-                  value={formData.email}
+                  value={inquiryData.email}
                   onChange={handleChange}
                   required
                 />
@@ -142,7 +148,7 @@ const ContactPage = () => {
                   type="tel"
                   id="phone"
                   name="phone"
-                  value={formData.phone}
+                  value={inquiryData.phone}
                   onChange={handleChange}
                 />
               </div>
@@ -154,7 +160,7 @@ const ContactPage = () => {
                 type="text"
                 id="subject"
                 name="subject"
-                value={formData.subject}
+                value={inquiryData.subject}
                 onChange={handleChange}
                 required
               />
@@ -166,7 +172,7 @@ const ContactPage = () => {
                 id="message"
                 name="message"
                 rows="5"
-                value={formData.message}
+                value={inquiryData.message}
                 onChange={handleChange}
                 required
               ></textarea>
@@ -186,7 +192,7 @@ const ContactPage = () => {
           width="100%"
           height="450"
           style={{ border: 0 }}
-          allowFullScreen=""
+          allowFullScreen
           loading="lazy"
         ></iframe>
       </div>

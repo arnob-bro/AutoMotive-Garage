@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaUser, FaBell, FaShoppingCart, FaCar, FaUserShield, FaSignOutAlt } from 'react-icons/fa';
 import './navbar.css';
+import useUserStore from "../../stores/userStore";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
+  const {isAuthenticated, user} = useUserStore();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -39,8 +41,10 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [dropdownOpen, notificationOpen]);
 
-  const handleLogout = () => {
-    // Will implement actual logout logic later
+  const handleLogout = async () => {
+    await useUserStore.getState().logout();
+    console.log(useUserStore.getState().user);
+    console.log(useUserStore.getState().accessToken);
     setDropdownOpen(false);
   };
 
@@ -131,27 +135,36 @@ const Navbar = () => {
               {dropdownOpen && (
                 <div className="user-dropdown">
 
-                 <Link to="/account" className="dropdown-item">
-                    <FaUser className="dropdown-icon" />
-                    My Account
-                  </Link>
+                 {isAuthenticated && (
+                  <Link to="/account" className="dropdown-item">
+                  <FaUser className="dropdown-icon" />
+                  My Account
+                </Link>
+                 )}
                  
-                  <Link to="/admin" className="dropdown-item">
+                  {user && user.role==="admin" && (
+                    <Link to="/admin" className="dropdown-item">
                     <FaUserShield className="dropdown-icon" />
                     Admin
                   </Link> 
+                  )}
 
                   
 
-                  <Link to="/login" className="dropdown-item">
+                  {!isAuthenticated && (
+                    
+                      <Link to="/login" className="dropdown-item">
                     <FaUser className="dropdown-icon" />
                     Login
-                  </Link>  
+                  </Link> 
+                  )} 
 
-                   <button onClick={handleLogout} className="dropdown-item logout">
+                   {isAuthenticated && (
+                    <button onClick={handleLogout} className="dropdown-item logout">
                     <span>Logout</span>
                     <FaSignOutAlt className="logout-icon" />
                   </button> 
+                   )}
 
                 </div>
               )}
