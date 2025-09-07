@@ -1,3 +1,4 @@
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TABLE users (
     user_id UUID PRIMARY KEY,
@@ -18,7 +19,7 @@ CREATE TABLE customers (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE vehicle (
+CREATE TABLE vehicles (
     vehicle_id SERIAL PRIMARY KEY,
     brand VARCHAR(150) NOT NULL,
     model VARCHAR(150) NOT NULL,
@@ -151,13 +152,13 @@ CREATE TABLE payments (
 
 CREATE TABLE contact_forms (
     contactform_id SERIAL PRIMARY KEY,
-    name VARCHAR(150),
-    email VARCHAR(150),
-    message TEXT,
-    status VARCHAR(50),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    customer_id UUID,
-    CONSTRAINT fk_contact_customer FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+    name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    subject VARCHAR(250) NOT NULL,
+    message TEXT NOT NULL,
+    status VARCHAR(50) DEFAULT 'Unread',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 

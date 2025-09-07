@@ -17,9 +17,9 @@ const verifyAccessToken = (req, res, next) => {
       return res.status(401).json({ message: "Access Token Expired" });
     }
 
-    console.log("Decoded payload:", decoded); // Log the decoded payload
+    console.log("Decoded payload:", decoded); 
 
-    req.user = { user_id: decoded.id }; // Ensure `id` is correct
+    req.user = { user_id: decoded.id, role: decoded.role }; 
 
 
     next();

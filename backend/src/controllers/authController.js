@@ -19,6 +19,7 @@ class AuthController {
       this.logout = this.logout.bind(this);
       this.refresh = this.refresh.bind(this);
       this.getProfile = this.getProfile.bind(this);
+      this.updateProfile = this.updateProfile.bind(this);
     }
   
     async createUser(req, res) {
@@ -99,8 +100,8 @@ class AuthController {
             return res.status(400).json({error: "Invalid password"});
           }
           // generate token
-          const accessToken = generateAccessToken(user.user_id);
-          const refreshToken = generateRefreshToken(user.user_id);
+          const accessToken = generateAccessToken(user.user_id,"customer");
+          const refreshToken = generateRefreshToken(user.user_id,"customer");
           console.log(accessToken);
           console.log(refreshToken);
           res.cookie("refreshToken", refreshToken, {
@@ -118,6 +119,7 @@ class AuthController {
               user_id: user.user_id,
               name: user.name,
               email: user.email,
+              role:user.role
             }});
           
         
@@ -164,11 +166,24 @@ class AuthController {
     async getProfile(req, res) {
       try {
         const user_id = req.user.user_id;
-        const user = await this.userService.getUserById(user_id);
+        const user = await this.userService.getCustomerProfileById(user_id);
         res.status(200).json({success: true, message: "Welcome!", user});
       } catch (err) {
         console.error("Error getting profile:", err);
         res.status(500).json({ error: "Invalid request for fetching profile"});
+      }
+    }
+
+    async updateProfile(req, res) {
+      try {
+        const user_id = req.user.user_id;
+        const role = req.user.role;
+        const {email,phone,birthday,anniversary,address}= req.body;
+        const user = await this.userService.updateProfile(user_id,role,email,phone,birthday,anniversary,address);
+        res.status(200).json({success: true, message: "Profile has been updated", user});
+      } catch (err) {
+        console.error("Error updating profile:", err);
+        res.status(500).json({ error: "Invalid request for updating profile"});
       }
     }
     
