@@ -34,7 +34,7 @@ async function runMigrations() {
       DROP EXTENSION IF EXISTS "pgcrypto" CASCADE;
     `);
 
-    console.log("✅ All tables, types, and extensions dropped");
+    console.log("All tables, types, and extensions dropped");
 
     // Recreate migrations table
     await db.query(`
@@ -56,13 +56,13 @@ async function runMigrations() {
         const sql = fs.readFileSync(path.join(migrationsDir, file), "utf-8");
         await db.query(sql);
         await db.query("INSERT INTO migrations (filename) VALUES ($1)", [file]);
-        console.log(`🚀 Migration applied: ${file}`);
+        console.log(`Migration applied: ${file}`);
       } catch (err) {
-        console.error(`❌ Migration failed (${file}):`, err.message);
+        console.error(`Migration failed (${file}):`, err.message);
       }
     }
 
-    console.log("🎉 Database fully reset and all migrations applied ✅");
+    console.log("Database fully reset and all migrations applied");
   } catch (err) {
     console.error("Migration process failed:", err.message);
   }

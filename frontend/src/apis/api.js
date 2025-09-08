@@ -6,7 +6,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // 👈 send cookies
+  withCredentials: true, // send cookies
 });
 
 // Attach access token
