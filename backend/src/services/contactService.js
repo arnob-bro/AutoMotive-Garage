@@ -38,7 +38,58 @@ class ContactService {
     }
   }
 
-  async replyToInquiry(contactform_id, replyMessage) {
+  async getInquiries( page , limit , email, status ) {
+    try {
+      const offset = (page - 1) * limit;
+  
+      // Build dynamic WHERE clause
+      const conditions = [];
+      const values = [];
+  
+  
+      if (email) {
+        values.push(`%${email}%`);
+        conditions.push(`email ILIKE $${values.length}`);
+      }
+      if (status) {
+        values.push(status);
+        conditions.push(`status = $${values.length}`);
+      }
+      
+  
+      const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+  
+      // Fetch paginated results
+      const result = await this.db.query(
+        `SELECT * FROM contact_forms ${whereClause} ORDER BY created_at DESC LIMIT $${values.length + 1} OFFSET $${values.length + 2}`,
+        [...values, limit, offset]
+      );
+  
+      // Get total count for pagination
+      const countResult = await this.db.query(
+        `SELECT COUNT(*) FROM contact_forms ${whereClause}`,
+        values
+      );
+      const total = parseInt(countResult.rows[0].count, 10);
+      const totalPages = Math.ceil(total / limit);
+  
+      return {
+        success: true,
+        inquiries: result.rows,
+        pagination: {
+          page: page,
+          limit,
+          total,
+          totalPages
+        }
+      };
+    } catch (err) {
+      console.error("Error in fetching inquiries:", err.message);
+      throw new Error("Failed to fetch inquiries");
+    }
+  }
+
+  async replyToInquiry(contactform_id, replyMessage, admin_id) {
     try {
       const result = await this.db.query(
         `SELECT * FROM contact_forms WHERE contactform_id = $1`,
@@ -57,6 +108,19 @@ class ContactService {
         text,
         html,
       });
+
+      const result2 = await this.db.query(
+        `SELECT * FROM admins WHERE admin_id = $1`,
+        [admin_id]
+      );
+
+      const admin_name = result2.rows[0].name;
+
+
+      await this.db.query(
+        `INSERT INTO contact_replies (contactform_id, admin, message) VALUES ($1, $2, $3)`,
+        [contactform_id, admin_name, replyMessage]
+      );
   
       await this.db.query(
         `UPDATE contact_forms
@@ -71,9 +135,22 @@ class ContactService {
       throw err; // throw original error for debugging
     }
   }
-  
 
- 
+  async getReplyByContactFormId(contactform_id) {
+    try {
+    
+        
+      const result = await this.db.query(
+        `SELECT * FROM contact_replies WHERE contactform_id = $1`,
+        [contactform_id]
+      );
+  
+      return result.rows[0] || null;
+    } catch (err) {
+      console.error("Error in fetching reply:", err.message);
+      throw new Error("Failed to fetch reply");
+    }
+  }
 
 }
 

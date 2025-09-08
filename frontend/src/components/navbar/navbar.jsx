@@ -135,7 +135,7 @@ const Navbar = () => {
               {dropdownOpen && (
                 <div className="user-dropdown">
 
-                 {isAuthenticated && (
+                 {isAuthenticated && user.role==="customer" && (
                   <Link to="/account" className="dropdown-item">
                   <FaUser className="dropdown-icon" />
                   My Account

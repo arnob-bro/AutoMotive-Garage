@@ -161,6 +161,14 @@ CREATE TABLE contact_forms (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE contact_replies (
+    reply_id SERIAL PRIMARY KEY,
+    contactform_id INT REFERENCES contact_forms(contactform_id) ON DELETE CASCADE,
+    admin VARCHAR(150) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 
 CREATE TABLE reviews (

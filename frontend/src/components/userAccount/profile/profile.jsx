@@ -1,5 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { FaUser, FaEnvelope, FaPhone, FaCalendarAlt, FaSave, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import {
+  FaUser,
+  FaEnvelope,
+  FaPhone,
+  FaCalendarAlt,
+  FaSave,
+  FaEdit,
+  FaTrash,
+  FaPlus
+} from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import './profile.css';
 import AuthApi from "../../../apis/authApi";
@@ -8,87 +17,124 @@ const authApi = new AuthApi();
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
+  const [editedUserData, setEditedUserData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [editedData, setEditedData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // Fetch user data from API
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await authApi.getProfile(); 
-        setUserData(response.user);
-        setEditedData({
-          ...response.user,
-        });
-      } catch (err) {
-        console.error('Failed to fetch user data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchUser = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await authApi.getProfile(); // expects something like { success: true, user: { ... } }
+      // Support both response.user and direct user return
+      const user = response?.user ?? response;
+      if (!user) throw new Error("Invalid profile response");
+      setUserData(user);
+      // deep clone so edits don't mutate original state
+      setEditedUserData(JSON.parse(JSON.stringify(user)));
+    } catch (err) {
+      console.error("Failed to fetch user data:", err);
+      setError("Failed to fetch user data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchUser();
   }, []);
 
   const handleEdit = () => {
-    setEditedData({
-      ...userData,
-    });
+    // deep clone to avoid mutating userData directly
+    setEditedUserData(JSON.parse(JSON.stringify(userData || {})));
     setIsEditing(true);
   };
 
-  const handleSave = async () => {
-    try {
-      const validVehicles = editedData.vehicles.filter(
-        vehicle => vehicle.make?.trim() && vehicle.model?.trim() && vehicle.year?.trim()
-      );
-
-      // Save to API
-      const updatedData = { ...editedData, vehicles: validVehicles };
-      await authApi.updateProfile(updatedData); // Implement this API call in AuthApi
-
-      setUserData(updatedData);
-      setIsEditing(false);
-    } catch (err) {
-      console.error('Failed to save user data:', err);
-    }
-  };
-
   const handleCancel = () => {
+    // discard edits
+    setEditedUserData(JSON.parse(JSON.stringify(userData || {})));
     setIsEditing(false);
+    setError("");
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedData(prev => ({ ...prev, [name]: value }));
+    setEditedUserData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const handleVehicleChange = (id, field, value) => {
-    setEditedData(prev => ({
-      ...prev,
-      vehicles: prev.vehicles.map(vehicle =>
-        vehicle.id === id ? { ...vehicle, [field]: value } : vehicle
-      )
-    }));
+  const handleVehicleChange = (index, field, value) => {
+    setEditedUserData((prev) => {
+      const vehicles = Array.isArray(prev?.vehicles) ? [...prev.vehicles] : [];
+      vehicles[index] = { ...vehicles[index], [field]: value };
+      return { ...prev, vehicles };
+    });
   };
 
   const addNewVehicle = () => {
-    const newId = editedData.vehicles.length > 0
-      ? Math.max(...editedData.vehicles.map(v => v.id)) + 1
-      : 1;
-
-    setEditedData(prev => ({
-      ...prev,
-      vehicles: [...prev.vehicles, { id: newId, make: '', model: '', year: '' }]
-    }));
+    setEditedUserData((prev) => {
+      const vehicles = Array.isArray(prev?.vehicles) ? [...prev.vehicles] : [];
+      vehicles.push({ vehicle_id: null, brand: "", model: "", year: "" });
+      return { ...prev, vehicles };
+    });
   };
 
-  const deleteVehicle = (id) => {
-    setEditedData(prev => ({
-      ...prev,
-      vehicles: prev.vehicles.filter(vehicle => vehicle.id !== id)
-    }));
+  const deleteVehicle = (index) => {
+    setEditedUserData((prev) => {
+      const vehicles = Array.isArray(prev?.vehicles) ? [...prev.vehicles] : [];
+      vehicles.splice(index, 1);
+      return { ...prev, vehicles };
+    });
+  };
+
+  const handleSave = async () => {
+    setError("");
+    if (!editedUserData) return;
+
+    try {
+      // Build payload: ensure vehicles array exists and contains only expected fields
+      const payload = {
+        ...editedUserData,
+        vehicles: (editedUserData.vehicles || []).map((v) => ({
+          vehicle_id: v.vehicle_id ?? null,
+          brand: (v.brand ?? "").trim(),
+          model: (v.model ?? "").trim(),
+          year: (v.year ?? "").trim()
+        }))
+      };
+
+      const response = await authApi.updateProfile(payload);
+      // Accept both { success: true } and truthy responses
+      const ok = response?.success ?? true;
+
+      if (ok) {
+        // Re-fetch latest user from server to get any assigned ids or normalized data
+        await fetchUser();
+        setIsEditing(false);
+      } else {
+        console.error("Update profile failed:", response);
+        setError(response?.message ?? "Failed to update profile");
+      }
+    } catch (err) {
+      console.error("Failed to save user data:", err);
+      setError(err?.message ?? "Failed to save user data");
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const options = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    };
+    return new Date(dateString).toLocaleString(undefined, options);
   };
 
   if (loading) return <p>Loading user data...</p>;
@@ -115,6 +161,8 @@ const Profile = () => {
         )}
       </div>
 
+      {error && <div className="auto-error">{error}</div>}
+
       <div className="auto-profile-content">
         <div className="auto-profile-details">
           <div className="auto-detail-item">
@@ -123,7 +171,7 @@ const Profile = () => {
               <input
                 type="text"
                 name="name"
-                value={editedData.name}
+                value={editedUserData?.name ?? ""}
                 onChange={handleChange}
                 className="auto-edit-input"
               />
@@ -137,7 +185,7 @@ const Profile = () => {
               <input
                 type="email"
                 name="email"
-                value={editedData.email}
+                value={editedUserData?.email ?? ""}
                 onChange={handleChange}
                 className="auto-edit-input"
               />
@@ -151,17 +199,17 @@ const Profile = () => {
               <input
                 type="tel"
                 name="phone"
-                value={editedData.phone}
+                value={editedUserData?.phone ?? ""}
                 onChange={handleChange}
                 className="auto-edit-input"
               />
             ) : (
-              <p className="auto-detail-text">{userData.phone}</p>
+              <p className="auto-detail-text">{userData.phone || "not given yet"}</p>
             )}
           </div>
           <div className="auto-detail-item">
             <label><FaCalendarAlt /> Member Since</label>
-            <p className="auto-detail-text">{userData.joinDate}</p>
+            <p className="auto-detail-text">{formatDate(userData.created_at)}</p>
           </div>
           <div className="auto-detail-item">
             <label>Address</label>
@@ -169,12 +217,12 @@ const Profile = () => {
               <input
                 type="text"
                 name="address"
-                value={editedData.address}
+                value={editedUserData?.address ?? ""}
                 onChange={handleChange}
                 className="auto-edit-input"
               />
             ) : (
-              <p className="auto-detail-text">{userData.address}</p>
+              <p className="auto-detail-text">{userData.address || "not given yet"}</p>
             )}
           </div>
         </div>
@@ -191,16 +239,16 @@ const Profile = () => {
           </div>
 
           {isEditing ? (
-            editedData.vehicles.length > 0 ? (
+            (editedUserData?.vehicles?.length > 0) ? (
               <div className="auto-vehicles-list">
-                {editedData.vehicles.map(vehicle => (
-                  <div key={vehicle.id} className="auto-vehicle-card">
+                {editedUserData.vehicles.map((vehicle, idx) => (
+                  <div key={vehicle.vehicle_id ?? idx} className="auto-vehicle-card">
                     <div className="auto-vehicle-edit-field">
-                      <label>Make</label>
+                      <label>Brand</label>
                       <input
                         type="text"
-                        value={vehicle.make}
-                        onChange={(e) => handleVehicleChange(vehicle.id, 'make', e.target.value)}
+                        value={vehicle.brand ?? ""}
+                        onChange={(e) => handleVehicleChange(idx, 'brand', e.target.value)}
                         className="auto-edit-input"
                         placeholder="e.g. Toyota"
                       />
@@ -209,8 +257,8 @@ const Profile = () => {
                       <label>Model</label>
                       <input
                         type="text"
-                        value={vehicle.model}
-                        onChange={(e) => handleVehicleChange(vehicle.id, 'model', e.target.value)}
+                        value={vehicle.model ?? ""}
+                        onChange={(e) => handleVehicleChange(idx, 'model', e.target.value)}
                         className="auto-edit-input"
                         placeholder="e.g. Corolla"
                       />
@@ -219,17 +267,18 @@ const Profile = () => {
                       <label>Year</label>
                       <input
                         type="text"
-                        value={vehicle.year}
-                        onChange={(e) => handleVehicleChange(vehicle.id, 'year', e.target.value)}
+                        value={vehicle.year ?? ""}
+                        onChange={(e) => handleVehicleChange(idx, 'year', e.target.value)}
                         className="auto-edit-input"
                         placeholder="e.g. 2020"
                       />
                     </div>
                     <div className="auto-vehicle-actions">
-                      <button 
-                        onClick={() => deleteVehicle(vehicle.id)} 
+                      <button
+                        onClick={() => deleteVehicle(idx)}
                         className="auto-delete-vehicle-btn"
                         aria-label="Delete vehicle"
+                        type="button"
                       >
                         <FaTrash /> Delete
                       </button>
@@ -241,11 +290,11 @@ const Profile = () => {
               <p>No vehicles added yet</p>
             )
           ) : (
-            userData.vehicles.length > 0 ? (
+            (userData?.vehicles?.length > 0) ? (
               <div className="auto-vehicles-list">
                 {userData.vehicles.map(vehicle => (
-                  <div key={vehicle.id} className="auto-vehicle-card">
-                    <div className="auto-vehicle-make">{vehicle.make}</div>
+                  <div key={vehicle.vehicle_id} className="auto-vehicle-card">
+                    <div className="auto-vehicle-make">{vehicle.brand}</div>
                     <div className="auto-vehicle-model">{vehicle.model}</div>
                     <div className="auto-vehicle-year">{vehicle.year}</div>
                     <Link to="/services" className="auto-service-link">Schedule Service</Link>

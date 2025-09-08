@@ -60,6 +60,16 @@ const MyAccount = () => {
   const isActive = (path) => {
     return location.pathname === path;
   };
+  const formatDate = (dateString) => {
+    const options = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(dateString).toLocaleString(undefined, options);
+  };
 
   return (
     <div className="my-account-page">
@@ -83,7 +93,7 @@ const MyAccount = () => {
             <h2>{user.name}</h2>
             <p>{user.email}</p>
             <p>{user.phone}</p>
-            <p className="join-date">Member since {user.created_at}</p>
+            <p className="join-date">Member since {formatDate(user.created_at)}</p>
           </div>
         </div>
 

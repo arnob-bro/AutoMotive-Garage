@@ -56,7 +56,7 @@ export default class AuthApi {
 
   async updateProfile() {
     try {
-      const response = await this.authApi.get(`${this.baseURL}/update-profile`);
+      const response = await this.authApi.post(`${this.baseURL}/update-profile`);
       return response.data;
     } catch (err) {
       throw err.response?.data || { error: "Profile fetch failed" };

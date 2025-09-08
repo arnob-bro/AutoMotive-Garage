@@ -100,8 +100,8 @@ class AuthController {
             return res.status(400).json({error: "Invalid password"});
           }
           // generate token
-          const accessToken = generateAccessToken(user.user_id,"customer");
-          const refreshToken = generateRefreshToken(user.user_id,"customer");
+          const accessToken = generateAccessToken(user.user_id,user.role);
+          const refreshToken = generateRefreshToken(user.user_id,user.role);
           console.log(accessToken);
           console.log(refreshToken);
           res.cookie("refreshToken", refreshToken, {
@@ -152,7 +152,7 @@ class AuthController {
         if (!user) {
           return res.status(401).json({error: "Unauthorized"});
         }
-        const accessToken = generateAccessToken(user.user_id);
+        const accessToken = generateAccessToken(user.user_id, user.role);
         res.status(200).json({success: true, message: "Token refreshed", accessToken});
       } catch (err) {
         if (err.name === "TokenExpiredError") {

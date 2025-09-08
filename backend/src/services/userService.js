@@ -97,11 +97,16 @@ class UserService {
         return null;
       }
   
+      console.log({
+        ...res1.rows[0],
+        ...res2.rows[0],
+        vehicles: res3.rows || []
+      });
       // Merge the two objects
       return {
         ...res1.rows[0],
         ...res2.rows[0],
-        vehicles: res1.rows[0] || []
+        vehicles: res3.rows[0] || []
       };
     } catch (err) {
       console.error("Error in getting customer profile by id:", err.message);

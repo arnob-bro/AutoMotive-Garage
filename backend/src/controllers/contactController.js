@@ -5,6 +5,9 @@ class ContactController {
       // Bind methods so 'this' works in routes
       this.makeInquiry = this.makeInquiry.bind(this);
       this.replyToInquiry = this.replyToInquiry.bind(this);
+      this.getInquiries = this.getInquiries.bind(this);
+      this.getReplyByContactFormId = this.getReplyByContactFormId.bind(this);
+      
       
     }
   
@@ -35,19 +38,50 @@ class ContactController {
           }
         
         const inquiry = await this.contactService.makeInquiry(name,email, phone, subject, message);
-        res.status(201).json({success: true, message: "User created successfully", data: inquiry});
+        res.status(201).json({ success: true, message: "Inquiry submitted successfully", data: inquiry });
       } catch (err) {
         res.status(400).json({ error: err.message });
       }
     }
 
+    async getInquiries(req, res) {
+        try {
+          const { page, limit, email, status } = req.query;
+          
+      
+          const inquiries = await this.contactService.getInquiries(
+            page,
+            limit,
+            email,
+            status
+          );
+      
+          res.status(200).json(inquiries);
+        } catch (err) {
+          console.error("Error fetching inquiries:", err);
+          res.status(400).json({ error: err.message });
+        }
+      }
+
     async replyToInquiry(req,res) {
         try{
             const {contactform_id} = req.params;
             const {replyMessage} = req.body;
+            const admin_id = req.user.user_id;
 
-            const reply = await this.contactService.replyToInquiry(contactform_id,replyMessage);
+            const reply = await this.contactService.replyToInquiry(contactform_id,replyMessage, admin_id);
             res.status(200).json({success: true});
+        }catch(err){
+            res.status(500).json({error: err.message});
+        }
+    }
+
+    async getReplyByContactFormId(req,res) {
+        try{
+            const {contactform_id} = req.params;
+
+            const reply = await this.contactService.getReplyByContactFormId(contactform_id);
+            res.status(200).json({success: true, reply});
         }catch(err){
             res.status(500).json({error: err.message});
         }
