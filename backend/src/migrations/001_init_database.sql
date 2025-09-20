@@ -45,8 +45,8 @@ CREATE TABLE services (
     name VARCHAR(150) NOT NULL,
     description TEXT,
     price NUMERIC(10,2),
-    duration_estimate VARCHAR(50),
-    is_active BOOLEAN DEFAULT TRUE,
+    duration VARCHAR(50),
+    status VARCHAR(20) DEFAULT 'Active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
