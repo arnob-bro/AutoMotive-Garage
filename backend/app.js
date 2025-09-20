@@ -5,14 +5,17 @@ const cookieParser = require("cookie-parser");
 const createAuthRouter = require("./src/routes/authRoutes");
 const createContactRouter = require("./src/routes/contactRoutes");
 const createServiceRouter = require("./src/routes/serviceRoutes");
+const createPartRouter = require("./src/routes/partRoutes");
 
 const AuthController = require("./src/controllers/authController");
 const ContactController = require("./src/controllers/contactController");
 const ServiceController = require("./src/controllers/serviceController");
+const PartController = require("./src/controllers/partController");
 
 const UserService = require("./src/services/userService");
 const ContactService = require("./src/services/contactService");
 const ServiceService = require("./src/services/serviceService");
+const PartService = require("./src/services/partService");
 
 const db = require("./src/config/supabaseClient");
 
@@ -39,20 +42,24 @@ app.get("/", (req, res) => {
 const userService = new UserService(db);
 const contactService = new ContactService(db);
 const serviceService = new ServiceService(db);
+const partService = new PartService(db);
 
 
 const authController = new AuthController(userService);
 const contactController = new ContactController(contactService);
 const serviceController = new ServiceController(serviceService);
+const partController = new PartController(partService);
 
 
 const authRouter = createAuthRouter(authController);
 const contactRouter = createContactRouter(contactController);
 const serviceRouter = createServiceRouter(serviceController);
+const partRouter = createPartRouter(partController);
 
 // API routes
 app.use("/auth", authRouter);
 app.use("/contact", contactRouter);
 app.use("/service", serviceRouter);
+app.use("/part", partRouter);
 
 module.exports = app;

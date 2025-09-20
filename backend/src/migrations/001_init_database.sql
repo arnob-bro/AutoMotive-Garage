@@ -46,7 +46,7 @@ CREATE TABLE services (
     description TEXT,
     price NUMERIC(10,2),
     duration VARCHAR(50),
-    status VARCHAR(20) DEFAULT 'Active',
+    status VARCHAR(20) DEFAULT 'Active', --e.g. Active, Inactive, Deleted
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -80,13 +80,14 @@ CREATE TABLE parts (
     part_id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     short_description VARCHAR(255),
+    long_description TEXT,
     price NUMERIC(10,2),
     stock INT,
-    image_url VARCHAR(255),
-    is_active BOOLEAN DEFAULT TRUE,
+    category VARCHAR(100), -- added category
+    image VARCHAR(255),    -- renamed from image_url to image
+    status VARCHAR(20) DEFAULT 'Active', -- Active, Inactive, Deleted
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    long_description TEXT
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
