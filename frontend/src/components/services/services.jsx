@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ServiceApi from '../../apis/serviceApi'; // Adjust the import path as needed
 import './services.css';
 
 const Services = () => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [servicesList, setServicesList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Initialize ServiceApi
+  const serviceApi = new ServiceApi();
 
   // Available time slots
   const availableTimes = [
@@ -12,72 +19,47 @@ const Services = () => {
     '12:30 PM', '02:00 PM', '03:30 PM', '05:00 PM'
   ];
 
-  // Complete list of services
-  const servicesList = [
-    {
-      id: 1,
-      name: 'Premium Oil Change',
-      description: 'Full synthetic oil change with OEM filter replacement',
-      duration: '30 mins',
-      price: 6999
-    },
-    {
-      id: 2,
-      name: 'Complete Tire Service',
-      description: 'Rotation, balancing and pressure check for all tires',
-      duration: '45 mins',
-      price: 3999
-    },
-    {
-      id: 3,
-      name: 'Brake System Overhaul',
-      description: 'Full inspection with pad/disc replacement if needed',
-      duration: '2 hours',
-      price: 14999
-    },
-    {
-      id: 4,
-      name: 'Advanced Diagnostic Scan',
-      description: 'Computer diagnostic with detailed report',
-      duration: '1 hour',
-      price: 9999
-    },
-    {
-      id: 5,
-      name: 'Battery Service',
-      description: 'Testing, replacement and terminal cleaning',
-      duration: '30 mins',
-      price: 13999
-    },
-    {
-      id: 6,
-      name: 'AC Performance Check',
-      description: 'System diagnostic and refrigerant recharge',
-      duration: '1 hour',
-      price: 11999
-    },
-    {
-      id: 7,
-      name: 'Transmission Flush',
-      description: 'Complete fluid replacement with filter change',
-      duration: '1.5 hours',
-      price: 17999
-    },
-    {
-      id: 8,
-      name: 'Engine Tune-Up',
-      description: 'Spark plugs replacement and engine optimization',
-      duration: '2 hours',
-      price: 19999
-    },
-    {
-      id: 9,
-      name: 'Full Detailing',
-      description: 'Interior and exterior deep cleaning',
-      duration: '3 hours',
-      price: 24999
+  // Fetch services from API
+  const fetchServices = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const response = await serviceApi.getServices({
+        page: 1,
+        limit: 50, // Get more services for user selection
+        searchTerm: '',
+        status: 'Active' // Only show active services to users
+      });
+
+      if (response.success) {
+        // Transform the services data to match the component's expected format
+        const transformedServices = response.services.map(service => ({
+          id: service.service_id,
+          name: service.name,
+          description: service.description,
+          duration: service.duration,
+          price: parseFloat(service.price) * 100 // Convert to paisa/cents for consistency with original format
+        }));
+        
+        setServicesList(transformedServices);
+      } else {
+        setError('Failed to fetch services');
+        setServicesList([]);
+      }
+    } catch (err) {
+      console.error('Error fetching services:', err);
+      setError(err.error || 'Failed to fetch services');
+      setServicesList([]);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  // Load services on component mount
+  useEffect(() => {
+    fetchServices();
+  }, []);
 
   const toggleService = (service) => {
     if (selectedServices.some(s => s.id === service.id)) {
@@ -87,7 +69,7 @@ const Services = () => {
     }
   };
 
-  const handleBooking = () => {
+  const handleBooking = async () => {
     if (selectedServices.length === 0) {
       alert('Please select at least one service');
       return;
@@ -105,13 +87,25 @@ const Services = () => {
       estimatedDuration: calculateTotalDuration()
     };
 
-    console.log('Booking Details:', bookingDetails);
-    alert(`Booking Confirmed!\n\nDate: ${selectedDate}\nTime: ${selectedTime}\n\nServices:\n${selectedServices.map(s => `- ${s.name} (৳${(s.price).toLocaleString('en-BD')})`).join('\n')}\n\nTotal: ৳${bookingDetails.total.toLocaleString('en-BD')}\nEstimated Duration: ${bookingDetails.estimatedDuration}`);
+    try {
+      // Here you would typically send the booking to your backend
+      // For now, we'll just show the confirmation
+      console.log('Booking Details:', bookingDetails);
+      
+      alert(`Booking Confirmed!\n\nDate: ${selectedDate}\nTime: ${selectedTime}\n\nServices:\n${selectedServices.map(s => `- ${s.name} (৳${(s.price / 100).toLocaleString('en-BD')})`).join('\n')}\n\nTotal: ৳${(bookingDetails.total / 100).toLocaleString('en-BD')}\nEstimated Duration: ${bookingDetails.estimatedDuration}`);
 
-    // Clear the form after booking
-    setSelectedServices([]);
-    setSelectedDate('');
-    setSelectedTime('');
+      // Clear the form after booking
+      setSelectedServices([]);
+      setSelectedDate('');
+      setSelectedTime('');
+      
+      // TODO: Implement actual booking API call here
+      // await bookingApi.createBooking(bookingDetails);
+      
+    } catch (error) {
+      console.error('Booking error:', error);
+      alert('Failed to create booking. Please try again.');
+    }
   };
 
   const calculateTotalDuration = () => {
@@ -120,12 +114,16 @@ const Services = () => {
       let minutes = 0;
       
       if (timeStr.includes('hour')) {
-        const hours = parseInt(timeStr);
+        const hours = parseFloat(timeStr);
         minutes = hours * 60;
-        const remainingMins = parseInt(timeStr.match(/(\d+) mins/)?.[1] || 0);
-        minutes += remainingMins;
-      } else {
+        if (timeStr.includes('.5')) {
+          minutes += 30;
+        }
+      } else if (timeStr.includes('min')) {
         minutes = parseInt(timeStr) || 30;
+      } else {
+        // Default to 30 minutes if format is unclear
+        minutes = 30;
       }
       
       return sum + minutes;
@@ -133,12 +131,64 @@ const Services = () => {
     
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-    return hours > 0 ? `${hours} hour${hours > 1 ? 's' : ''} ${minutes} mins` : `${minutes} mins`;
+    return hours > 0 ? `${hours} hour${hours > 1 ? 's' : ''} ${minutes > 0 ? ` ${minutes} mins` : ''}` : `${minutes} mins`;
   };
 
   const formatPrice = (price) => {
-    return price.toLocaleString('en-BD');
+    return (price / 100).toLocaleString('en-BD'); // Convert from paisa/cents to main currency
   };
+
+  if (loading) {
+    return (
+      <div className="services-page">
+        <div className="services-header">
+          <h1>Our Automotive Services</h1>
+          <p>Loading services...</p>
+        </div>
+        <div className="loading-spinner" style={{
+          textAlign: 'center',
+          padding: '50px',
+          fontSize: '18px'
+        }}>
+          Loading our latest services for you...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="services-page">
+        <div className="services-header">
+          <h1>Our Automotive Services</h1>
+          <p>We're having trouble loading services right now</p>
+        </div>
+        <div className="error-message" style={{
+          textAlign: 'center',
+          padding: '50px',
+          color: '#e74c3c',
+          fontSize: '18px'
+        }}>
+          {error}
+          <br />
+          <button 
+            onClick={fetchServices}
+            style={{
+              marginTop: '20px',
+              padding: '10px 20px',
+              backgroundColor: '#3498db',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer'
+            }}
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="services-page">
@@ -149,20 +199,31 @@ const Services = () => {
 
       <div className={`services-layout ${selectedServices.length > 0 ? 'with-booking' : ''}`}>
         <div className={`services-container ${selectedServices.length > 0 ? 'with-booking' : ''}`}>
-          {servicesList.map(service => (
-            <div 
-              key={service.id} 
-              className={`service-card ${selectedServices.some(s => s.id === service.id) ? 'selected' : ''}`}
-              onClick={() => toggleService(service)}
-            >
-              <h3>{service.name}</h3>
-              <p>{service.description}</p>
-              <div className="service-meta">
-                <span className="duration">⏱️ {service.duration}</span>
-                <span className="price">৳{formatPrice(service.price)}</span>
+          {servicesList.length > 0 ? (
+            servicesList.map(service => (
+              <div 
+                key={service.id} 
+                className={`service-card ${selectedServices.some(s => s.id === service.id) ? 'selected' : ''}`}
+                onClick={() => toggleService(service)}
+              >
+                <h3>{service.name}</h3>
+                <p>{service.description}</p>
+                <div className="service-meta">
+                  <span className="duration">⏱️ {service.duration}</span>
+                  <span className="price">৳{formatPrice(service.price)}</span>
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="no-services" style={{
+              textAlign: 'center',
+              padding: '50px',
+              fontSize: '18px',
+              color: '#666'
+            }}>
+              No services available at the moment. Please check back later.
             </div>
-          ))}
+          )}
         </div>
 
         <div className="booking-section">
@@ -201,6 +262,11 @@ const Services = () => {
                 <div className="total-price">
                   <span>Total Amount:</span>
                   <span>৳{formatPrice(selectedServices.reduce((sum, service) => sum + service.price, 0))}</span>
+                </div>
+                
+                <div className="estimated-duration">
+                  <span>Estimated Duration:</span>
+                  <span>{calculateTotalDuration()}</span>
                 </div>
               </div>
 
