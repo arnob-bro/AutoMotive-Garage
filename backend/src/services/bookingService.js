@@ -37,6 +37,16 @@ class BookingService {
           services 
         } = bookingData;
       
+        // First, verify that the customer exists
+        const customerCheck = await this.db.query(
+          "SELECT customer_id FROM customers WHERE customer_id = $1",
+          [customer_id]
+        );
+        
+        if (customerCheck.rows.length === 0) {
+          throw new Error(`Customer with ID ${customer_id} not found. Please ensure the user has a customer profile.`);
+        }
+      
         const client = await this.db.connect();
         try {
           await client.query("BEGIN");
@@ -106,18 +116,22 @@ class BookingService {
       try {
         const offset = (page - 1) * limit;
     
-        let query = `SELECT * FROM bookings WHERE 1=1`;
+        let query = `SELECT b.*, c.name as customer_name, u.email as customer_email, c.phone as customer_phone, c.address as customer_address 
+                     FROM bookings b 
+                     LEFT JOIN customers c ON b.customer_id = c.customer_id 
+                     LEFT JOIN users u ON b.customer_id = u.user_id 
+                     WHERE 1=1`;
         let params = [];
         let index = 1;
     
         if (searchTerm) {
-          query += ` AND (booking_code ILIKE $${index} OR vehicle ILIKE $${index})`;
+          query += ` AND (b.booking_code ILIKE $${index} OR b.vehicle ILIKE $${index} OR c.name ILIKE $${index} OR u.email ILIKE $${index})`;
           params.push(`%${searchTerm}%`);
           index++;
         }
     
         if (status) {
-          query += ` AND status = $${index}`;
+          query += ` AND b.status = $${index}`;
           params.push(status);
           index++;
         }
@@ -128,7 +142,7 @@ class BookingService {
         const totalCount = parseInt(countResult.rows[0].count);
     
         // Add pagination
-        query += ` ORDER BY booking_date DESC LIMIT $${index} OFFSET $${index + 1}`;
+        query += ` ORDER BY b.booking_date DESC LIMIT $${index} OFFSET $${index + 1}`;
         params.push(limit, offset);
     
         // Get bookings
@@ -225,7 +239,7 @@ class BookingService {
             "SELECT email FROM users WHERE user_id = $1",
             [customer_id]
           );
-          const email = result3.rows[0].email;
+          const email = result3.rows[0]?.email;
       
           // Send email
           await this.transporter.sendMail({
@@ -282,7 +296,7 @@ class BookingService {
             "SELECT email FROM users WHERE user_id = $1",
             [customer_id]
           );
-          const email = result3.rows[0].email;
+          const email = result3.rows[0]?.email;
 
           await this.transporter.sendMail({
             from: `"AutoMotive Garage BD" <${process.env.EMAIL_USER}>`,

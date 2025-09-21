@@ -3,126 +3,121 @@ import {
   FaCalendarAlt, FaFilter, FaCheckCircle, 
   FaSpinner, FaTimes, FaUserCog, 
   FaDollarSign, FaCar, FaTools, FaSearch,
-  FaHistory, FaClipboardCheck
+  FaHistory, FaClipboardCheck, FaMoneyBillWave,
+  FaExchangeAlt, FaCreditCard
 } from 'react-icons/fa';
+import BookingApi from '../../../apis/bookingApi';
 import './ServiceBookingManagement.css';
 
 const ServiceBookingManagement = () => {
-  // Sample booking data
-  const allBookings = [
-    {
-      id: 1,
-      bookingId: 'BK-2023-001',
-      customer: 'John Doe',
-      vehicle: 'Toyota Corolla 2020',
-      services: ['Oil Change', 'Tire Rotation'],
-      date: '2023-06-15',
-      time: '09:30 AM',
-      status: 'confirmed',
-      paymentStatus: 'paid',
-      total: 109.98,
-      duration: '1 hour 15 mins',
-      address: '123 Road, Dhaka 1212, Bangladesh'
-    },
-    {
-      id: 2,
-      bookingId: 'BK-2023-002',
-      customer: 'Jane Smith',
-      vehicle: 'Honda Civic 2019',
-      services: ['Brake Inspection', 'AC Check'],
-      date: '2023-06-16',
-      time: '11:00 AM',
-      status: 'in-progress',
-      paymentStatus: 'paid',
-      total: 169.98,
-      duration: '2 hours',
-      address: '456 Avenue, Chittagong 4000, Bangladesh'
-    },
-    {
-      id: 3,
-      bookingId: 'BK-2023-003',
-      customer: 'Robert Johnson',
-      vehicle: 'Ford F-150 2021',
-      services: ['Engine Tune-Up'],
-      date: '2023-06-17',
-      time: '02:00 PM',
-      status: 'pending',
-      paymentStatus: 'pending',
-      total: 199.99,
-      duration: '2 hours',
-      address: '789 Street, Sylhet 3100, Bangladesh'
-    },
-    {
-      id: 4,
-      bookingId: 'BK-2023-004',
-      customer: 'Emily Davis',
-      vehicle: 'Tesla Model 3 2022',
-      services: ['Full Detailing'],
-      date: '2023-06-18',
-      time: '10:00 AM',
-      status: 'completed',
-      paymentStatus: 'paid',
-      total: 249.99,
-      duration: '3 hours',
-      address: '321 Lane, Khulna 9000, Bangladesh'
-    },
-    {
-      id: 5,
-      bookingId: 'BK-2023-005',
-      customer: 'Michael Wilson',
-      vehicle: 'Chevrolet Silverado 2020',
-      services: ['Transmission Flush', 'Battery Service'],
-      date: '2023-06-19',
-      time: '03:30 PM',
-      status: 'cancelled',
-      paymentStatus: 'refunded',
-      total: 319.98,
-      duration: '2 hours 30 mins',
-      address: '654 Boulevard, Rajshahi 6000, Bangladesh'
-    }
-  ];
-
-  const [bookings, setBookings] = useState(allBookings);
+  const [bookings, setBookings] = useState([]);
+  const [allBookings, setAllBookings] = useState([]);
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
+  // Initialize BookingApi
+  const bookingApi = new BookingApi();
+
+  // Helper function to safely format the total amount
+  const formatTotalAmount = (total) => {
+    if (total === null || total === undefined) return 'N/A';
+    
+    // Convert to number if it's a string
+    const num = typeof total === 'string' ? parseFloat(total) : total;
+    
+    // Check if it's a valid number
+    if (isNaN(num)) return 'Invalid amount';
+    
+    return `BDT ${num.toFixed(2)}`;
+  };
+
+  // Fetch bookings from API
+  const fetchBookings = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const response = await bookingApi.getBookings({
+        page: currentPage,
+        limit: 20,
+        searchTerm: searchTerm,
+        status: activeTab === 'all' ? '' : activeTab
+      });
+
+      if (response.success) {
+        console.log('Raw API response:', response);
+        // Transform API response to match component format
+        const transformedBookings = response.bookings.map(booking => ({
+          id: booking.booking_id,
+          bookingId: booking.booking_id,
+          customer: booking.customer_name || booking.customer_email || `Customer ${booking.customer_id?.slice(0, 8)}` || 'Unknown Customer',
+          vehicle: booking.vehicle || 'Not specified',
+          services: booking.services ? booking.services.map(s => s.name) : [],
+          date: booking.booking_date,
+          time: booking.booking_time,
+          status: booking.status,
+          paymentStatus: booking.paymentStatus,
+          total: booking.total,
+          duration: booking.duration,
+          address: booking.customer_address || booking.address || 'Address not provided',
+          customer_id: booking.customer_id,
+          customer_email: booking.customer_email,
+          customer_phone: booking.customer_phone
+        }));
+        
+        setBookings(transformedBookings);
+        setAllBookings(transformedBookings);
+        setTotalPages(response.totalPages || 1);
+      } else {
+        setError(response.message || 'Failed to fetch bookings');
+        setBookings([]);
+        setAllBookings([]);
+      }
+    } catch (err) {
+      console.error('Error fetching bookings:', err);
+      setError(err.error || 'Failed to fetch bookings');
+      setBookings([]);
+      setAllBookings([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load bookings on component mount and when filters change
   useEffect(() => {
-    // Filter bookings based on active tab and search term
-    let filtered = allBookings;
-    
-    if (activeTab === 'completed') {
-      filtered = filtered.filter(booking => booking.status === 'completed');
-    } else if (activeTab === 'cancelled') {
-      filtered = filtered.filter(booking => booking.status === 'cancelled');
-    } else if (activeTab !== 'all') {
-      filtered = filtered.filter(booking => booking.status === activeTab);
-    }
-    
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(booking => 
-        booking.customer.toLowerCase().includes(term) ||
-        booking.vehicle.toLowerCase().includes(term) ||
-        booking.bookingId.toLowerCase().includes(term)
-      );
-    }
-    
-    setBookings(filtered);
-  }, [activeTab, searchTerm]);
+    fetchBookings();
+  }, [currentPage, activeTab, searchTerm]);
 
-  const updateBookingStatus = (bookingId, newStatus) => {
-    const updatedBookings = allBookings.map(booking => 
-      booking.id === bookingId 
-        ? { ...booking, status: newStatus } 
-        : booking
-    );
-    
-    setBookings(updatedBookings);
+  const updateBookingStatus = async (bookingId, newStatus) => {
+    try {
+      const response = await bookingApi.updateBookingStatus(bookingId, { status: newStatus });
+      
+      if (response.success) {
+        // If status is being updated to 'completed', also update payment status to 'paid'
+        if (newStatus === 'completed') {
+          await bookingApi.updateBookingPaymentStatus(bookingId, { paymentStatus: 'paid' });
+        }
+        
+        // Refresh bookings to get updated data
+        await fetchBookings();
+        alert(`Booking status updated to ${newStatus}${newStatus === 'completed' ? ' and payment status set to paid' : ''}`);
+      } else {
+        alert(`Failed to update booking status: ${response.message}`);
+      }
+    } catch (error) {
+      console.error('Error updating booking status:', error);
+      alert(`Failed to update booking status: ${error.error || error.message}`);
+    }
   };
 
   const viewBookingDetails = (booking) => {
+    console.log('Viewing booking details:', booking);
     setSelectedBooking(booking);
     setShowDetailsModal(true);
   };
@@ -144,6 +139,19 @@ const ServiceBookingManagement = () => {
     }
   };
 
+  const getPaymentIcon = (paymentStatus) => {
+    switch(paymentStatus) {
+      case 'paid':
+        return <FaMoneyBillWave className="sbm-payment-icon sbm-paid" />;
+      case 'pending':
+        return <FaCreditCard className="sbm-payment-icon sbm-pending" />;
+      case 'refund':
+        return <FaExchangeAlt className="sbm-payment-icon sbm-refund" />;
+      default:
+        return <FaCreditCard className="sbm-payment-icon sbm-unknown" />;
+    }
+  };
+
   const statusCounts = {
     all: allBookings.length,
     confirmed: allBookings.filter(b => b.status === 'confirmed').length,
@@ -152,6 +160,55 @@ const ServiceBookingManagement = () => {
     pending: allBookings.filter(b => b.status === 'pending').length,
     cancelled: allBookings.filter(b => b.status === 'cancelled').length
   };
+
+  // Add loading state to the component
+  if (loading && allBookings.length === 0) {
+    return (
+      <div className="sbm-page-container">
+        <div className="sbm-content-container">
+          <div className="sbm-header">
+            <h2 className="sbm-title">Service Bookings Management</h2>
+            <p className="sbm-subtitle">Loading bookings...</p>
+          </div>
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            <FaSpinner className="fa-spin" style={{ fontSize: '2rem', marginBottom: '1rem' }} />
+            <p>Loading bookings from the server...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Add error state to the component
+  if (error && allBookings.length === 0) {
+    return (
+      <div className="sbm-page-container">
+        <div className="sbm-content-container">
+          <div className="sbm-header">
+            <h2 className="sbm-title">Service Bookings Management</h2>
+            <p className="sbm-subtitle">Error loading bookings</p>
+          </div>
+          <div style={{ textAlign: 'center', padding: '50px', color: '#e74c3c' }}>
+            <p>{error}</p>
+            <button 
+              onClick={fetchBookings}
+              style={{
+                marginTop: '20px',
+                padding: '10px 20px',
+                backgroundColor: '#3498db',
+                color: 'white',
+                border: 'none',
+                borderRadius: '5px',
+                cursor: 'pointer'
+              }}
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="sbm-page-container">
@@ -257,9 +314,9 @@ const ServiceBookingManagement = () => {
                       </div>
                     </div>
                     <div className="sbm-table-col sbm-col-payment">
-                      <div className={`sbm-payment-badge sbm-${booking.paymentStatus}`}>
-                        <FaDollarSign className="sbm-payment-icon" />
-                        <span>{booking.paymentStatus}</span>
+                      <div className={`sbm-payment-badge sbm-${booking.paymentStatus || 'pending'}`}>
+                        {getPaymentIcon(booking.paymentStatus || 'pending')}
+                        <span>{booking.paymentStatus || 'pending'}</span>
                       </div>
                     </div>
                     <div className="sbm-table-col sbm-col-actions">
@@ -302,7 +359,17 @@ const ServiceBookingManagement = () => {
                   </div>
                   <div className="sbm-detail-item">
                     <span className="sbm-detail-label">Customer:</span>
-                    <span className="sbm-detail-value">{selectedBooking.customer}</span>
+                    <span className="sbm-detail-value">
+                      <div className="sbm-customer-info">
+                        <div className="sbm-customer-name">{selectedBooking.customer}</div>
+                        {selectedBooking.customer_email && (
+                          <div className="sbm-customer-email">📧 {selectedBooking.customer_email}</div>
+                        )}
+                        {selectedBooking.customer_phone && (
+                          <div className="sbm-customer-phone">📞 {selectedBooking.customer_phone}</div>
+                        )}
+                      </div>
+                    </span>
                   </div>
                   <div className="sbm-detail-item">
                     <span className="sbm-detail-label">Vehicle:</span>
@@ -333,9 +400,9 @@ const ServiceBookingManagement = () => {
                   <div className="sbm-detail-item">
                     <span className="sbm-detail-label">Payment:</span>
                     <span className="sbm-detail-value">
-                      <div className={`sbm-payment-badge sbm-${selectedBooking.paymentStatus}`}>
-                        <FaDollarSign className="sbm-payment-icon" />
-                        <span>{selectedBooking.paymentStatus}</span>
+                      <div className={`sbm-payment-badge sbm-${selectedBooking.paymentStatus || 'pending'}`}>
+                        {getPaymentIcon(selectedBooking.paymentStatus || 'pending')}
+                        <span>{selectedBooking.paymentStatus || 'pending'}</span>
                       </div>
                     </span>
                   </div>
@@ -352,12 +419,12 @@ const ServiceBookingManagement = () => {
                   </div>
                   <div className="sbm-detail-item">
                     <span className="sbm-detail-label">Estimated Duration:</span>
-                    <span className="sbm-detail-value">{selectedBooking.duration}</span>
+                    <span className="sbm-detail-value">{selectedBooking.duration || 'Not specified'}</span>
                   </div>
                   <div className="sbm-detail-item">
                     <span className="sbm-detail-label">Total Amount:</span>
                     <span className="sbm-detail-value sbm-total-amount">
-                      BDT {selectedBooking.total.toFixed(2)}
+                      {formatTotalAmount(selectedBooking.total)}
                     </span>
                   </div>
                 </div>
@@ -366,8 +433,8 @@ const ServiceBookingManagement = () => {
                 {selectedBooking.status === 'pending' && (
                   <button 
                     className="sbm-btn sbm-confirm-btn"
-                    onClick={() => {
-                      updateBookingStatus(selectedBooking.id, 'confirmed');
+                    onClick={async () => {
+                      await updateBookingStatus(selectedBooking.id, 'confirmed');
                       setShowDetailsModal(false);
                     }}
                   >
@@ -377,8 +444,8 @@ const ServiceBookingManagement = () => {
                 {selectedBooking.status === 'confirmed' && (
                   <button 
                     className="sbm-btn sbm-start-btn"
-                    onClick={() => {
-                      updateBookingStatus(selectedBooking.id, 'in-progress');
+                    onClick={async () => {
+                      await updateBookingStatus(selectedBooking.id, 'in-progress');
                       setShowDetailsModal(false);
                     }}
                   >
@@ -388,8 +455,8 @@ const ServiceBookingManagement = () => {
                 {selectedBooking.status === 'in-progress' && (
                   <button 
                     className="sbm-btn sbm-complete-btn"
-                    onClick={() => {
-                      updateBookingStatus(selectedBooking.id, 'completed');
+                    onClick={async () => {
+                      await updateBookingStatus(selectedBooking.id, 'completed');
                       setShowDetailsModal(false);
                     }}
                   >
@@ -399,8 +466,8 @@ const ServiceBookingManagement = () => {
                 {selectedBooking.status !== 'cancelled' && (
                   <button 
                     className="sbm-btn sbm-cancel-btn"
-                    onClick={() => {
-                      updateBookingStatus(selectedBooking.id, 'cancelled');
+                    onClick={async () => {
+                      await updateBookingStatus(selectedBooking.id, 'cancelled');
                       setShowDetailsModal(false);
                     }}
                   >
