@@ -158,6 +158,8 @@
 .sbm-col-actions {
   display: flex;
   gap: 8px;
+  justify-content: center;
+  min-width: 100px;
 }
 
 .sbm-booking-id {
@@ -235,6 +237,7 @@
   width: fit-content;
   background: rgba(52, 152, 219, 0.1);
   color: var(--info);
+  text-transform: capitalize;
 }
 
 .sbm-payment-icon {
@@ -242,19 +245,25 @@
   font-size: 14px;
 }
 
-.sbm-paid {
+.sbm-payment-badge.sbm-paid {
   background: rgba(46, 204, 113, 0.1);
   color: var(--success);
 }
 
-.sbm-pending {
+.sbm-payment-badge.sbm-pending {
   background: rgba(243, 156, 18, 0.1);
   color: var(--warning);
 }
 
-.sbm-refunded {
+.sbm-payment-badge.sbm-refunded {
   background: rgba(231, 76, 60, 0.1);
   color: var(--danger);
+}
+
+/* Ensure payment column is properly sized */
+.sbm-col-payment {
+  min-width: 120px;
+  justify-content: center;
 }
 
 /* Action Buttons */

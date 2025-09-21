@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ServiceApi from '../../apis/serviceApi'; // Adjust the import path as needed
+import BookingApi from '../../apis/bookingApi';
+import useUserStore from '../../stores/userStore';
 import './services.css';
 
 const Services = () => {
@@ -9,9 +11,12 @@ const Services = () => {
   const [servicesList, setServicesList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [bookingLoading, setBookingLoading] = useState(false);
 
-  // Initialize ServiceApi
+  // Initialize APIs and get user info
   const serviceApi = new ServiceApi();
+  const bookingApi = new BookingApi();
+  const { user, isAuthenticated } = useUserStore();
 
   // Available time slots
   const availableTimes = [
@@ -78,33 +83,51 @@ const Services = () => {
       alert('Please select date and time');
       return;
     }
+    if (!isAuthenticated || !user) {
+      alert('Please login to book services');
+      return;
+    }
 
-    const bookingDetails = {
-      services: selectedServices,
-      date: selectedDate,
-      time: selectedTime,
-      total: selectedServices.reduce((sum, service) => sum + service.price, 0),
-      estimatedDuration: calculateTotalDuration()
-    };
+    setBookingLoading(true);
 
     try {
-      // Here you would typically send the booking to your backend
-      // For now, we'll just show the confirmation
-      console.log('Booking Details:', bookingDetails);
-      
-      alert(`Booking Confirmed!\n\nDate: ${selectedDate}\nTime: ${selectedTime}\n\nServices:\n${selectedServices.map(s => `- ${s.name} (৳${(s.price / 100).toLocaleString('en-BD')})`).join('\n')}\n\nTotal: ৳${(bookingDetails.total / 100).toLocaleString('en-BD')}\nEstimated Duration: ${bookingDetails.estimatedDuration}`);
+      // Prepare booking data for API
+      const bookingData = {
+        booking_date: selectedDate,
+        booking_time: selectedTime,
+        status: 'pending',
+        paymentStatus: 'pending',
+        vehicle: user.vehicle || 'Not specified', // You might want to add vehicle info to user profile
+        duration: calculateTotalDuration(),
+        total: selectedServices.reduce((sum, service) => sum + service.price, 0),
+        customer_id: user.user_id, // This should be the same as customer_id in customers table
+        services: selectedServices.map(service => ({
+          service_id: service.id,
+          name: service.name,
+          price: service.price,
+          duration: service.duration
+        }))
+      };
 
-      // Clear the form after booking
-      setSelectedServices([]);
-      setSelectedDate('');
-      setSelectedTime('');
+      // Create booking via API
+      const response = await bookingApi.createBooking(bookingData);
       
-      // TODO: Implement actual booking API call here
-      // await bookingApi.createBooking(bookingDetails);
+      if (response.success) {
+        alert(`Booking Confirmed!\n\nBooking ID: ${response.booking.booking_id}\nDate: ${selectedDate}\nTime: ${selectedTime}\n\nServices:\n${selectedServices.map(s => `- ${s.name} (৳${(s.price / 100).toLocaleString('en-BD')})`).join('\n')}\n\nTotal: ৳${(bookingData.total / 100).toLocaleString('en-BD')}\nEstimated Duration: ${bookingData.duration}\n\nYou will receive a confirmation email shortly.`);
+
+        // Clear the form after successful booking
+        setSelectedServices([]);
+        setSelectedDate('');
+        setSelectedTime('');
+      } else {
+        throw new Error(response.message || 'Failed to create booking');
+      }
       
     } catch (error) {
       console.error('Booking error:', error);
-      alert('Failed to create booking. Please try again.');
+      alert(`Failed to create booking: ${error.error || error.message || 'Please try again.'}`);
+    } finally {
+      setBookingLoading(false);
     }
   };
 
@@ -303,12 +326,14 @@ const Services = () => {
                 <button 
                   onClick={handleBooking}
                   className="book-now-btn"
-                  disabled={!selectedDate || !selectedTime}
+                  disabled={!selectedDate || !selectedTime || bookingLoading || !isAuthenticated}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M5 13L9 17L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  Book Now (৳{formatPrice(selectedServices.reduce((sum, service) => sum + service.price, 0))})
+                  {bookingLoading ? 'Creating Booking...' : 
+                   !isAuthenticated ? 'Login to Book' : 
+                   `Book Now (৳${formatPrice(selectedServices.reduce((sum, service) => sum + service.price, 0))})`}
                 </button>
               </div>
             </>

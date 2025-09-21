@@ -66,14 +66,21 @@ class BookingController {
       try {
         const { page = 1, limit = 10, searchTerm = "", status = "" } = req.query;
   
-        const bookings = await this.bookingService.getBookings(
+        const result = await this.bookingService.getBookings(
           parseInt(page),
           parseInt(limit),
           searchTerm,
           status
         );
   
-        res.json(bookings);
+        res.json({
+          success: true,
+          bookings: result.data,
+          page: result.page,
+          limit: result.limit,
+          total: result.total,
+          totalPages: result.totalPages
+        });
       } catch (error) {
         console.error("Error in getBookings:", error);
         res.status(500).json({ success: false, error: error.message });
