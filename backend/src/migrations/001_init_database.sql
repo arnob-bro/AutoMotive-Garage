@@ -111,8 +111,7 @@ CREATE TABLE orders (
 );
 
 CREATE TABLE order_items (
-    order_items_id SERIAL PRIMARY KEY,
-    item_name VARCHAR(150) NOT NULL,               -- item name
+    order_items_id SERIAL PRIMARY KEY,           -- item name
     quantity INT NOT NULL,
     price_each NUMERIC(10,2) NOT NULL,            -- price per unit
     order_id INT NOT NULL,
