@@ -19,6 +19,7 @@ INSERT INTO users (user_id, email, password_hash) VALUES
 ('13131313-1313-1313-1313-131313131313', 'quinn@example.com', crypt('123456', gen_salt('bf'))),
 ('14141414-1414-1414-1414-141414141414', 'ruby@example.com', crypt('123456', gen_salt('bf'))),
 ('15151515-1515-1515-1515-151515151515', 'sam@example.com', crypt('123456', gen_salt('bf'))),
+('f778a3f7-16c3-4725-a45d-1c9587fddfec', 'abdulmohaimenkhanarnob@gmail.com', crypt('123456', gen_salt('bf'))),
 ('16161616-1616-1616-1616-161616161616', 'tina@example.com', crypt('123456', gen_salt('bf')));
 
 INSERT INTO users (user_id, email, password_hash,role) VALUES
@@ -46,6 +47,7 @@ INSERT INTO customers (customer_id, name) VALUES
 ('13131313-1313-1313-1313-131313131313', 'Quinn Allen'),
 ('14141414-1414-1414-1414-141414141414', 'Ruby King'),
 ('15151515-1515-1515-1515-151515151515', 'Sam Scott'),
+('f778a3f7-16c3-4725-a45d-1c9587fddfec', 'Arnob Khan'),
 ('16161616-1616-1616-1616-161616161616', 'Tina Green');
 
 

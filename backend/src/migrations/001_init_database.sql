@@ -52,26 +52,28 @@ CREATE TABLE services (
 );
 
 
-CREATE TABLE appointments (
-    appointment_id SERIAL PRIMARY KEY,
-    appointment_date TIMESTAMP NOT NULL,
-    status VARCHAR(50),
-    vehicle_model VARCHAR(100),
-    vehicle_brand VARCHAR(100),
-    notes TEXT,
+CREATE TABLE bookings (
+    booking_id SERIAL PRIMARY KEY,
+    booking_code VARCHAR(50) UNIQUE NOT NULL,         -- e.g., BK-2023-001
+    booking_date DATE NOT NULL,
+    booking_time TIME NOT NULL,
+    status VARCHAR(50) NOT NULL,                      -- pending, confirmed, etc.
+    paymentStatus VARCHAR(50) NOT NULL,                     -- pendng, paid,refunded
+    vehicle VARCHAR(100) NOT NULL,
+    duration VARCHAR(50) DEFAULT '1 hour',
+    total NUMERIC(10,2) NOT NULL,
+    customer_id UUID NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    customer_id UUID,
     CONSTRAINT fk_customer FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
 );
 
 
-CREATE TABLE appointment_services (
-    appointment_services_id SERIAL PRIMARY KEY,
-    cost NUMERIC(10,2),
-    appointment_id INT,
+CREATE TABLE booking_services (
+    booking_services_id SERIAL PRIMARY KEY,
+    booking_id INT,
     service_id INT,
-    CONSTRAINT fk_appointment FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id),
+    CONSTRAINT fk_booking FOREIGN KEY (booking_id) REFERENCES bookings(booking_id),
     CONSTRAINT fk_service FOREIGN KEY (service_id) REFERENCES services(service_id)
 );
 
@@ -143,10 +145,10 @@ CREATE TABLE payments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     customer_id UUID,
     order_id INT,
-    appointment_id INT,
+    booking_id INT,
     CONSTRAINT fk_payment_customer FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
     CONSTRAINT fk_payment_order FOREIGN KEY (order_id) REFERENCES orders(order_id),
-    CONSTRAINT fk_payment_appointment FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id)
+    CONSTRAINT fk_payment_booking FOREIGN KEY (booking_id) REFERENCES bookings(booking_id)
 );
 
 
