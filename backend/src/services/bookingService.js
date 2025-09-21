@@ -44,7 +44,7 @@ class BookingService {
         );
         
         if (customerCheck.rows.length === 0) {
-          throw new Error(`Customer with ID ${customer_id} not found. Please ensure the user has a customer profile.`);
+          throw new Error(`Customer not found. Please ensure the user has a customer profile.`);
         }
       
         const client = await this.db.connect();
