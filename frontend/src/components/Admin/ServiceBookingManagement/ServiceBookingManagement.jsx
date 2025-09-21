@@ -20,7 +20,6 @@ const ServiceBookingManagement = () => {
       time: '09:30 AM',
       status: 'confirmed',
       paymentStatus: 'paid',
-      paymentMethod: 'SSL Commerz',
       total: 109.98,
       duration: '1 hour 15 mins',
       address: '123 Road, Dhaka 1212, Bangladesh'
@@ -35,7 +34,6 @@ const ServiceBookingManagement = () => {
       time: '11:00 AM',
       status: 'in-progress',
       paymentStatus: 'paid',
-      paymentMethod: 'Cash on Delivery',
       total: 169.98,
       duration: '2 hours',
       address: '456 Avenue, Chittagong 4000, Bangladesh'
@@ -50,7 +48,6 @@ const ServiceBookingManagement = () => {
       time: '02:00 PM',
       status: 'pending',
       paymentStatus: 'pending',
-      paymentMethod: 'SSL Commerz',
       total: 199.99,
       duration: '2 hours',
       address: '789 Street, Sylhet 3100, Bangladesh'
@@ -65,7 +62,6 @@ const ServiceBookingManagement = () => {
       time: '10:00 AM',
       status: 'completed',
       paymentStatus: 'paid',
-      paymentMethod: 'SSL Commerz',
       total: 249.99,
       duration: '3 hours',
       address: '321 Lane, Khulna 9000, Bangladesh'
@@ -80,7 +76,6 @@ const ServiceBookingManagement = () => {
       time: '03:30 PM',
       status: 'cancelled',
       paymentStatus: 'refunded',
-      paymentMethod: 'SSL Commerz',
       total: 319.98,
       duration: '2 hours 30 mins',
       address: '654 Boulevard, Rajshahi 6000, Bangladesh'
@@ -264,7 +259,7 @@ const ServiceBookingManagement = () => {
                     <div className="sbm-table-col sbm-col-payment">
                       <div className={`sbm-payment-badge sbm-${booking.paymentStatus}`}>
                         <FaDollarSign className="sbm-payment-icon" />
-                        <span>{booking.paymentMethod} ({booking.paymentStatus})</span>
+                        <span>{booking.paymentStatus}</span>
                       </div>
                     </div>
                     <div className="sbm-table-col sbm-col-actions">
@@ -340,7 +335,7 @@ const ServiceBookingManagement = () => {
                     <span className="sbm-detail-value">
                       <div className={`sbm-payment-badge sbm-${selectedBooking.paymentStatus}`}>
                         <FaDollarSign className="sbm-payment-icon" />
-                        <span>{selectedBooking.paymentMethod} ({selectedBooking.paymentStatus})</span>
+                        <span>{selectedBooking.paymentStatus}</span>
                       </div>
                     </span>
                   </div>
