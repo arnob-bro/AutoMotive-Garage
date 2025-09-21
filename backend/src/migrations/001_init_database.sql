@@ -94,42 +94,29 @@ CREATE TABLE parts (
 
 
 
-CREATE TABLE categories (
-    category_id SERIAL PRIMARY KEY,
-    category_name VARCHAR(150) NOT NULL
-);
-
-
-
-CREATE TABLE category_assignment (
-    category_assignment_id SERIAL PRIMARY KEY,
-    part_id INT,
-    category_id INT,
-    CONSTRAINT fk_part FOREIGN KEY (part_id) REFERENCES parts(part_id),
-    CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories(category_id)
-);
-
-
 CREATE TABLE orders (
     order_id SERIAL PRIMARY KEY,
-    status VARCHAR(50),
-    total_amount NUMERIC(10,2),
-    payment_status VARCHAR(50),
-    payment_method VARCHAR(50),
+    order_code VARCHAR(50) UNIQUE NOT NULL,         -- e.g., ORD-1003
+    status VARCHAR(50) NOT NULL,                    -- e.g., processing, shipped, delivered, cancelled
+    total_amount NUMERIC(10,2) NOT NULL,           -- total before tax
+    tax NUMERIC(10,2) DEFAULT 0,                   -- tax amount
+    net_amount NUMERIC(10,2) NOT NULL,            -- total + tax
+    payment_status VARCHAR(50) NOT NULL,           -- e.g., pending, paid, refunded
+    payment_method VARCHAR(50) NOT NULL,           -- e.g., cod, ssl
+    delivery_address TEXT NOT NULL,                -- full customer address
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    customer_id UUID,
+    customer_id UUID NOT NULL,
     CONSTRAINT fk_order_customer FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
 );
 
-
-
 CREATE TABLE order_items (
     order_items_id SERIAL PRIMARY KEY,
+    item_name VARCHAR(150) NOT NULL,               -- item name
     quantity INT NOT NULL,
-    price_each NUMERIC(10,2),
-    order_id INT,
-    part_id INT,
+    price_each NUMERIC(10,2) NOT NULL,            -- price per unit
+    order_id INT NOT NULL,
+    part_id INT,                                   -- nullable if item not in parts table
     CONSTRAINT fk_order FOREIGN KEY (order_id) REFERENCES orders(order_id),
     CONSTRAINT fk_order_part FOREIGN KEY (part_id) REFERENCES parts(part_id)
 );

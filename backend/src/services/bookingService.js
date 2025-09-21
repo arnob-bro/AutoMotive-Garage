@@ -103,75 +103,83 @@ class BookingService {
   
     // Get all bookings with pagination + search + filter
     async getBookings(page = 1, limit = 10, searchTerm = "", status = "") {
-        try {
-          const offset = (page - 1) * limit;
-      
-          let query = `SELECT * FROM bookings WHERE 1=1`;
-          let params = [];
-          let index = 1;
-      
-          if (searchTerm) {
-            query += ` AND (booking_code ILIKE $${index} OR vehicle ILIKE $${index})`;
-            params.push(`%${searchTerm}%`);
-            index++;
-          }
-      
-          if (status) {
-            query += ` AND status = $${index}`;
-            params.push(status);
-            index++;
-          }
-      
-          query += ` ORDER BY booking_date DESC LIMIT $${index} OFFSET $${index + 1}`;
-          params.push(limit, offset);
-      
-          // Get bookings
-          const result = await this.db.query(query, params);
-          const bookings = result.rows;
-      
-          if (bookings.length === 0) {
-            return { page, limit, count: 0, data: [] };
-          }
-      
-          // Get all booking_ids
-          const bookingIds = bookings.map(b => b.booking_id);
-      
-          // Fetch related services in one query
-          const servicesResult = await this.db.query(
-            `SELECT bs.booking_id, bs.booking_services_id, 
-                    s.service_id, s.name, s.description
-             FROM booking_services bs
-             JOIN services s ON bs.service_id = s.service_id
-             WHERE bs.booking_id = ANY($1)`,
-            [bookingIds]
-          );
-      
-          // Group services by booking_id
-          const servicesMap = {};
-          servicesResult.rows.forEach(service => {
-            if (!servicesMap[service.booking_id]) {
-              servicesMap[service.booking_id] = [];
-            }
-            servicesMap[service.booking_id].push(service);
-          });
-      
-          // Attach services to each booking
-          const data = bookings.map(b => ({
-            ...b,
-            services: servicesMap[b.booking_id] || []
-          }));
-      
-          return {
-            page,
-            limit,
-            count: data.length,
-            data
-          };
-        } catch (error) {
-          console.error("Error in getBookings:", error);
-          throw error;
+      try {
+        const offset = (page - 1) * limit;
+    
+        let query = `SELECT * FROM bookings WHERE 1=1`;
+        let params = [];
+        let index = 1;
+    
+        if (searchTerm) {
+          query += ` AND (booking_code ILIKE $${index} OR vehicle ILIKE $${index})`;
+          params.push(`%${searchTerm}%`);
+          index++;
         }
+    
+        if (status) {
+          query += ` AND status = $${index}`;
+          params.push(status);
+          index++;
+        }
+    
+        // Get total count for pagination
+        const countQuery = `SELECT COUNT(*) FROM (${query}) AS total`;
+        const countResult = await this.db.query(countQuery, params);
+        const totalCount = parseInt(countResult.rows[0].count);
+    
+        // Add pagination
+        query += ` ORDER BY booking_date DESC LIMIT $${index} OFFSET $${index + 1}`;
+        params.push(limit, offset);
+    
+        // Get bookings
+        const result = await this.db.query(query, params);
+        const bookings = result.rows;
+    
+        if (bookings.length === 0) {
+          return { page, limit, total: totalCount, data: [] };
+        }
+    
+        // Get all booking_ids
+        const bookingIds = bookings.map(b => b.booking_id);
+    
+        // Fetch related services in one query
+        const servicesResult = await this.db.query(
+          `SELECT bs.booking_id, bs.booking_services_id, 
+                  s.service_id, s.name, s.description
+           FROM booking_services bs
+           JOIN services s ON bs.service_id = s.service_id
+           WHERE bs.booking_id = ANY($1)`,
+          [bookingIds]
+        );
+    
+        // Group services by booking_id
+        const servicesMap = {};
+        servicesResult.rows.forEach(service => {
+          if (!servicesMap[service.booking_id]) {
+            servicesMap[service.booking_id] = [];
+          }
+          servicesMap[service.booking_id].push(service);
+        });
+    
+        // Attach services to each booking
+        const data = bookings.map(b => ({
+          ...b,
+          services: servicesMap[b.booking_id] || []
+        }));
+    
+        return {
+          page,
+          limit,
+          total: totalCount,   // total number of bookings matching filters
+          totalPages: Math.ceil(totalCount / limit), // total pages
+          data
+        };
+      } catch (error) {
+        console.error("Error in getBookings:", error);
+        throw error;
+      }
     }
+    
       
   
     // Get booking by ID
