@@ -83,8 +83,9 @@ const ServiceBookingManagement = () => {
       console.error('Error fetching bookings:', err);
       setError(err.error || 'Failed to fetch bookings');
       setBookings([]);
-      setAllBookings([]);
-    } finally {
+        setAllBookings([]);
+      }
+    finally {
       setLoading(false);
     }
   };
@@ -96,25 +97,35 @@ const ServiceBookingManagement = () => {
 
   const updateBookingStatus = async (bookingId, newStatus) => {
     try {
-      const response = await bookingApi.updateBookingStatus(bookingId, { status: newStatus });
-      
-      if (response.success) {
-        // If status is being updated to 'completed', also update payment status to 'paid'
+      const statusResponse = await bookingApi.updateBookingStatus(bookingId, { status: newStatus });
+  
+      if (statusResponse.success) {
+        let newPaymentStatus = selectedBooking.paymentStatus;
+  
         if (newStatus === 'completed') {
-          await bookingApi.updateBookingPaymentStatus(bookingId, { paymentStatus: 'paid' });
+          try {
+            const paymentResponse = await bookingApi.updateBookingPaymentStatus(bookingId, { paymentStatus: 'paid' });
+            if (paymentResponse.success) newPaymentStatus = 'paid';
+          } catch (paymentError) {
+            console.error('Error updating payment status:', paymentError);
+          }
         }
-        
-        // Refresh bookings to get updated data
-        await fetchBookings();
+  
+        // Update local state immediately
+        setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: newStatus, paymentStatus: newPaymentStatus } : b));
+        setAllBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: newStatus, paymentStatus: newPaymentStatus } : b));
+        setSelectedBooking(prev => prev ? { ...prev, status: newStatus, paymentStatus: newPaymentStatus } : prev);
+  
         alert(`Booking status updated to ${newStatus}${newStatus === 'completed' ? ' and payment status set to paid' : ''}`);
       } else {
-        alert(`Failed to update booking status: ${response.message}`);
+        alert(`Failed to update booking status: ${statusResponse.message}`);
       }
     } catch (error) {
       console.error('Error updating booking status:', error);
       alert(`Failed to update booking status: ${error.error || error.message}`);
     }
   };
+  
 
   const viewBookingDetails = (booking) => {
     console.log('Viewing booking details:', booking);
