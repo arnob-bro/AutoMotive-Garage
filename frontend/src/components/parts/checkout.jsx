@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './checkout.css';
+import useUserStore from '../../stores/userStore';
 
 const Checkout = () => {
   const navigate = useNavigate();
+  const {user} = useUserStore();
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem('cart')) || []);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     email: '',
     phone: '',
     address: '',
@@ -88,21 +89,11 @@ const Checkout = () => {
           <form onSubmit={handleSubmit}>
             <div className="form-row">
               <div className="form-group">
-                <label>First Name</label>
+                <label>Name</label>
                 <input
                   type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Last Name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleInputChange}
                   required
                 />

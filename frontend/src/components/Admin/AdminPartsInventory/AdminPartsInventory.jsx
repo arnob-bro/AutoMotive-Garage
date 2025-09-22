@@ -3,69 +3,75 @@ import {
   FaBoxes, FaPlus, FaEdit, FaSearch, 
   FaFilter, FaWarehouse, FaDollarSign 
 } from 'react-icons/fa';
+import {
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
 import './AdminPartsInventory.css';
+import PartApi from '../../../apis/partApi';
+const partApi = new PartApi();
 
 const AdminPartsInventory = () => {
   // Sample parts data
-  const initialParts = [
-    {
-      id: 1,
-      name: 'Premium Brake Pads',
-      shortDescription: 'High-performance ceramic brake pads',
-      longDescription: 'Premium ceramic brake pads designed for all weather conditions. Provides excellent stopping power and reduced brake dust. Fits most modern vehicles.',
-      price: 5999,
-      stock: 42,
-      category: 'Brakes',
-      status: 'Active',
-      image: 'https://images.unsplash.com/photo-1631729371254-42c2892f0e6e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&h=200&q=80'
-    },
-    {
-      id: 2,
-      name: 'Performance Air Filter',
-      shortDescription: 'High-flow reusable air filter',
-      longDescription: 'Performance air filter that increases airflow to your engine while providing excellent filtration. Washable and reusable design saves money over time.',
-      price: 3999,
-      stock: 28,
-      category: 'Engine',
-      status: 'Active',
-      image: 'https://images.unsplash.com/photo-1590856029826-c7a1a7954a3a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&h=200&q=80'
-    },
-    {
-      id: 3,
-      name: 'Synthetic Motor Oil 5W-30',
-      shortDescription: 'Full synthetic engine oil 5qt',
-      longDescription: 'Advanced full synthetic motor oil that provides superior engine protection and performance. Reduces engine wear and improves fuel efficiency. Suitable for all modern vehicles.',
-      price: 3499,
-      stock: 75,
-      category: 'Fluids',
-      status: 'Active',
-      image: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&h=200&q=80'
-    },
-    {
-      id: 4,
-      name: 'LED Headlight Bulbs',
-      shortDescription: 'Ultra-bright LED conversion kit',
-      longDescription: 'Direct replacement LED headlight bulbs that provide brighter, whiter light than standard halogen bulbs. Easy plug-and-play installation with no modifications required.',
-      price: 8999,
-      stock: 15,
-      category: 'Lighting',
-      status: 'Inactive',
-      image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&h=200&q=80'
-    },
-    {
-      id: 5,
-      name: 'Car Battery',
-      shortDescription: 'High-performance automotive battery',
-      longDescription: 'Premium car battery with high cold cranking amps (CCA) for reliable starts in all weather conditions. Maintenance-free design with long service life.',
-      price: 12999,
-      stock: 8,
-      category: 'Electrical',
-      status: 'Active',
-      image: 'https://images.unsplash.com/photo-1554744512-d6c603f27c54?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&h=200&q=80'
-    }
-  ];
+  // const initialParts = [
+  //   {
+  //     id: 1,
+  //     name: 'Premium Brake Pads',
+  //     short_description: 'High-performance ceramic brake pads',
+  //     long_description: 'Premium ceramic brake pads designed for all weather conditions. Provides excellent stopping power and reduced brake dust. Fits most modern vehicles.',
+  //     price: 5999,
+  //     stock: 42,
+  //     category: 'Brakes',
+  //     status: 'Active',
+  //     image: 'https://images.unsplash.com/photo-1631729371254-42c2892f0e6e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&h=200&q=80'
+  //   },
+  //   {
+  //     id: 2,
+  //     name: 'Performance Air Filter',
+  //     short_description: 'High-flow reusable air filter',
+  //     long_description: 'Performance air filter that increases airflow to your engine while providing excellent filtration. Washable and reusable design saves money over time.',
+  //     price: 3999,
+  //     stock: 28,
+  //     category: 'Engine',
+  //     status: 'Active',
+  //     image: 'https://images.unsplash.com/photo-1590856029826-c7a1a7954a3a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&h=200&q=80'
+  //   },
+  //   {
+  //     id: 3,
+  //     name: 'Synthetic Motor Oil 5W-30',
+  //     short_description: 'Full synthetic engine oil 5qt',
+  //     long_description: 'Advanced full synthetic motor oil that provides superior engine protection and performance. Reduces engine wear and improves fuel efficiency. Suitable for all modern vehicles.',
+  //     price: 3499,
+  //     stock: 75,
+  //     category: 'Fluids',
+  //     status: 'Active',
+  //     image: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&h=200&q=80'
+  //   },
+  //   {
+  //     id: 4,
+  //     name: 'LED Headlight Bulbs',
+  //     short_description: 'Ultra-bright LED conversion kit',
+  //     long_description: 'Direct replacement LED headlight bulbs that provide brighter, whiter light than standard halogen bulbs. Easy plug-and-play installation with no modifications required.',
+  //     price: 8999,
+  //     stock: 15,
+  //     category: 'Lighting',
+  //     status: 'Inactive',
+  //     image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&h=200&q=80'
+  //   },
+  //   {
+  //     id: 5,
+  //     name: 'Car Battery',
+  //     short_description: 'High-performance automotive battery',
+  //     long_description: 'Premium car battery with high cold cranking amps (CCA) for reliable starts in all weather conditions. Maintenance-free design with long service life.',
+  //     price: 12999,
+  //     stock: 8,
+  //     category: 'Electrical',
+  //     status: 'Active',
+  //     image: 'https://images.unsplash.com/photo-1554744512-d6c603f27c54?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=300&h=200&q=80'
+  //   }
+  // ];
 
-  const [parts, setParts] = useState(initialParts);
+  const [parts, setParts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterStock, setFilterStock] = useState('all');
@@ -74,10 +80,12 @@ const AdminPartsInventory = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [currentPart, setCurrentPart] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [partForm, setPartForm] = useState({
     name: '',
-    shortDescription: '',
-    longDescription: '',
+    short_description: '',
+    long_description: '',
     price: '',
     stock: '',
     category: 'Brakes',
@@ -85,6 +93,29 @@ const AdminPartsInventory = () => {
     image: null
   });
   const [imagePreview, setImagePreview] = useState(null);
+
+  const fetchParts = async () => {
+    try {
+      
+      const response = await partApi.getParts({
+        page,
+        limit: 10,
+        searchTerm: searchTerm,
+        status: filterStatus
+      });
+
+      if (response.success) {
+        setParts(response.parts || []);
+        setTotalPages(response.pagination?.totalPages);
+      } 
+    } catch (err) {
+      console.error('Error fetching services:', err);
+    } 
+  };
+
+  useEffect(() => {
+    fetchParts();
+  }, [searchTerm,page,filterStatus]);
 
   // Prevent background scrolling when modals are open
   useEffect(() => {
@@ -102,17 +133,7 @@ const AdminPartsInventory = () => {
   const categories = ['all', ...new Set(parts.map(part => part.category))];
   const statusOptions = ['all', 'Active', 'Inactive', 'Deleted'];
 
-  const filteredParts = parts.filter(part => {
-    const matchesSearch = part.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         part.shortDescription.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || part.category === filterCategory;
-    const matchesStock = filterStock === 'all' || 
-                        (filterStock === 'low' && part.stock < 10) || 
-                        (filterStock === 'medium' && part.stock >= 10 && part.stock < 30) ||
-                        (filterStock === 'high' && part.stock >= 30);
-    const matchesStatus = filterStatus === 'all' || part.status === filterStatus;
-    return matchesSearch && matchesCategory && matchesStock && matchesStatus;
-  });
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -142,8 +163,8 @@ const AdminPartsInventory = () => {
   const openAddPartModal = () => {
     setPartForm({
       name: '',
-      shortDescription: '',
-      longDescription: '',
+      short_description: '',
+      long_description: '',
       price: '',
       stock: '',
       category: 'Brakes',
@@ -158,8 +179,8 @@ const AdminPartsInventory = () => {
     setCurrentPart(part);
     setPartForm({
       name: part.name,
-      shortDescription: part.shortDescription,
-      longDescription: part.longDescription,
+      short_description: part.short_description,
+      long_description: part.long_description,
       price: part.price,
       stock: part.stock,
       category: part.category,
@@ -175,33 +196,38 @@ const AdminPartsInventory = () => {
     setIsDetailModalOpen(true);
   };
 
-  const handlePartSubmit = (e) => {
+  const handlePartSubmit = async (e) => {
     e.preventDefault();
     
     if (isEditModalOpen) {
-      const updatedParts = parts.map(part => 
-        part.id === currentPart.id ? { 
-          ...partForm, 
-          id: currentPart.id,
-          image: imagePreview || currentPart.image
-        } : part
-      );
-      setParts(updatedParts);
+      // const updatedParts = parts.map(part => 
+      //   part.id === currentPart.id ? { 
+      //     ...partForm, 
+      //     id: currentPart.id,
+      //     image: imagePreview || currentPart.image
+      //   } : part
+      // );
+
+      const result = await partApi.updatePart(currentPart.part_id,
+        partForm)
+      const updatedParts = result.part;
+      // setParts(updatedParts);
+      // setParts([...parts, updatedParts]);
+      window.location.reload();
     } else {
-      const newPart = {
-        ...partForm,
-        id: parts.length > 0 ? Math.max(...parts.map(p => p.id)) + 1 : 1,
-        image: imagePreview || 'https://via.placeholder.com/300x200?text=No+Image'
-      };
-      setParts([...parts, newPart]);
+
+      const result = await partApi.createPart(partForm)
+      const newPart = result.part;
+      // setParts([...parts, newPart]);
+      window.location.reload();
     }
     
     setIsAddModalOpen(false);
     setIsEditModalOpen(false);
     setPartForm({
       name: '',
-      shortDescription: '',
-      longDescription: '',
+      short_description: '',
+      long_description: '',
       price: '',
       stock: '',
       category: 'Brakes',
@@ -242,34 +268,6 @@ const AdminPartsInventory = () => {
           </div>
           
           <div className="apm-filter-group">
-            <div className="apm-filter-dropdown">
-              <FaFilter className="apm-filter-icon" />
-              <select
-                value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
-              >
-                <option value="all">All Categories</option>
-                {categories.filter(c => c !== 'all').map(category => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="apm-filter-dropdown">
-              <FaWarehouse className="apm-filter-icon" />
-              <select
-                value={filterStock}
-                onChange={(e) => setFilterStock(e.target.value)}
-              >
-                <option value="all">All Stock Levels</option>
-                <option value="low">Low Stock (&lt; 10)</option>
-                <option value="medium">Medium Stock (10-29)</option>
-                <option value="high">High Stock (30+)</option>
-              </select>
-            </div>
-
             <div className="apm-filter-dropdown">
               <FaFilter className="apm-filter-icon" />
               <select
@@ -327,7 +325,7 @@ const AdminPartsInventory = () => {
       </div>
 
       <div className="apm-table-container">
-        {filteredParts.length > 0 ? (
+        {parts.length > 0 ? (
           <table className="apm-data-table">
             <thead>
               <tr>
@@ -341,15 +339,15 @@ const AdminPartsInventory = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredParts.map(part => (
-                <tr key={part.id} onClick={() => openDetailModal(part)}>
+              {parts.map(part => (
+                <tr key={part.part_id} onClick={() => openDetailModal(part)}>
                   <td className="apm-part-name">
                     <div className="apm-part-image">
                       <img src={part.image} alt={part.name} />
                     </div>
                     {part.name}
                   </td>
-                  <td>{part.shortDescription}</td>
+                  <td>{part.short_description}</td>
                   <td>{part.category}</td>
                   <td>{formatPrice(part.price)}</td>
                   <td className={part.stock < 10 ? 'apm-low-stock' : part.stock < 30 ? 'apm-medium-stock' : 'apm-high-stock'}>
@@ -377,6 +375,62 @@ const AdminPartsInventory = () => {
             <p>No parts found matching your criteria.</p>
           </div>
         )}
+        {/* Pagination */}
+        {totalPages > 1 && (
+                <div className="pagination">
+                {/* Previous */}
+                <button
+                  onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+                  disabled={page === 1}
+                  className="pagination-btn"
+                >
+                  <FiChevronLeft /> Previous
+                </button>
+              
+                {/* Page numbers with ellipsis */}
+                {(() => {
+                  const pages = [];
+                  const delta = 1; // show ±1 around current
+              
+                  for (let i = 1; i <= totalPages; i++) {
+                    if (
+                      i === 1 || 
+                      i === totalPages || 
+                      (i >= page - delta && i <= page + delta)
+                    ) {
+                      pages.push(i);
+                    } else if (pages[pages.length - 1] !== '...') {
+                      pages.push('...');
+                    }
+                  }
+              
+                  return pages.map((page, idx) =>
+                    page === '...' ? (
+                      <span key={idx} className="pagination-ellipsis">…</span>
+                    ) : (
+                      <button
+                        key={idx}
+                        onClick={() => setPage(page)}
+                        className={page === page ? 'active' : ''}
+                      >
+                        {page}
+                      </button>
+                    )
+                  );
+                })()}
+              
+                {/* Next */}
+                <button
+                  onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={page === totalPages}
+                  className="pagination-btn"
+                >
+                  Next <FiChevronRight />
+                </button>
+              </div>
+          
+          
+          )}
       </div>
 
       {/* Add/Edit Part Modal */}
@@ -426,9 +480,9 @@ const AdminPartsInventory = () => {
                   <label>Short Description (max 100 characters)</label>
                   <input
                     type="text"
-                    name="shortDescription"
+                    name="short_description"
                     className="apm-form-control"
-                    value={partForm.shortDescription}
+                    value={partForm.short_description}
                     onChange={handleInputChange}
                     required
                     maxLength="100"
@@ -438,9 +492,9 @@ const AdminPartsInventory = () => {
                 <div className="apm-form-group">
                   <label>Long Description (max 500 characters)</label>
                   <textarea
-                    name="longDescription"
+                    name="long_description"
                     className="apm-form-control"
-                    value={partForm.longDescription}
+                    value={partForm.long_description}
                     onChange={handleInputChange}
                     required
                     maxLength="500"
@@ -565,7 +619,7 @@ const AdminPartsInventory = () => {
               
               <div className="apm-detail-description">
                 <h4>Description</h4>
-                <p>{currentPart.longDescription}</p>
+                <p>{currentPart.long_description}</p>
               </div>
             </div>
             <div className="apm-modal-footer">

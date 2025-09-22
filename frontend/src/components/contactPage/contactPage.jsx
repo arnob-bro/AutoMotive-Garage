@@ -8,13 +8,15 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import ContactApi from '../../apis/contactApi';
 import './contactPage.css';
+import useUserStore from '../../stores/userStore';
 
 const contactApi = new ContactApi();
 
 const ContactPage = () => {
+  const { isAuthenticated, user } = useUserStore();
   const [inquiryData, setInquiryData] = useState({
     name: '',
-    email: '',
+    email: isAuthenticated ? user.email : '',
     phone: '',
     subject: '',
     message: ''
@@ -39,7 +41,7 @@ const ContactPage = () => {
       setSubmitted(true);
       setInquiryData({
         name: '',
-        email: '',
+        email: isAuthenticated ? user.email : '',
         phone: '',
         subject: '',
         message: ''

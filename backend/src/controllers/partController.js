@@ -29,10 +29,7 @@ class PartController {
           return res.status(400).json({error: "All fields are required"});
         }
         
-        // check if name is a valid name
-        if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(name)) {
-          return res.status(400).json({ error: "Invalid name" });
-        }
+        
         
         // Validate price
         if (price !== undefined && !/^\d+(\.\d{1,2})?$/.test(price.toString())) {
@@ -50,7 +47,7 @@ class PartController {
             return res.status(400).json({ error: "short description too long (max 255 chars)." });
         }
 
-        if (stock !== undefined && typeof stock !== "number") {
+        if (parseInt(stock) !== undefined && typeof parseInt(stock) !== "number") {
             return res.status(400).json({ error: "Invalid stock. Must be a int." });
         }
         
@@ -66,7 +63,7 @@ class PartController {
             short_description, 
             long_description, 
             price, 
-            stock , 
+            stock:parseInt(stock) , 
             category,
             image, 
             status
@@ -121,10 +118,7 @@ class PartController {
             return res.status(400).json({error: "All fields are required"});
           }
           
-          // check if name is a valid name
-          if (!/^[A-Za-z]+(?: [A-Za-z]+)*$/.test(name)) {
-            return res.status(400).json({ error: "Invalid name" });
-          }
+          
           
           // Validate price
           if (price !== undefined && !/^\d+(\.\d{1,2})?$/.test(price.toString())) {
