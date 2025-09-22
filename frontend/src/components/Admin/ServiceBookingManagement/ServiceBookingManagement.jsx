@@ -56,6 +56,7 @@ const ServiceBookingManagement = () => {
         const transformedBookings = response.bookings.map(booking => ({
           id: booking.booking_id,
           bookingId: booking.booking_id,
+          bookingCode: booking.booking_code,
           customer: booking.customer_name || booking.customer_email || `Customer ${booking.customer_id?.slice(0, 8)}` || 'Unknown Customer',
           vehicle: booking.vehicle || 'Not specified',
           services: booking.services ? booking.services.map(s => s.name) : [],
@@ -287,7 +288,7 @@ const ServiceBookingManagement = () => {
           <div className="sbm-bookings-table">
             <div className="sbm-table-header">
               <div className="sbm-table-row">
-                <div className="sbm-table-col sbm-col-id">Booking ID</div>
+                <div className="sbm-table-col sbm-col-id">Booking Code</div>
                 <div className="sbm-table-col sbm-col-customer">Customer</div>
                 <div className="sbm-table-col sbm-col-vehicle">Vehicle</div>
                 <div className="sbm-table-col sbm-col-services">Services</div>
@@ -303,7 +304,7 @@ const ServiceBookingManagement = () => {
                 bookings.map(booking => (
                   <div key={booking.id} className="sbm-table-row">
                     <div className="sbm-table-col sbm-col-id">
-                      <span className="sbm-booking-id">{booking.bookingId}</span>
+                      <span className="sbm-booking-id">{booking.bookingCode}</span>
                     </div>
                     <div className="sbm-table-col sbm-col-customer">{booking.customer}</div>
                     <div className="sbm-table-col sbm-col-vehicle">
@@ -365,8 +366,8 @@ const ServiceBookingManagement = () => {
               <div className="sbm-modal-body">
                 <div className="sbm-details-grid">
                   <div className="sbm-detail-item">
-                    <span className="sbm-detail-label">Booking ID:</span>
-                    <span className="sbm-detail-value">{selectedBooking.bookingId}</span>
+                    <span className="sbm-detail-label">Booking Code:</span>
+                    <span className="sbm-detail-value">{selectedBooking.bookingCode}</span>
                   </div>
                   <div className="sbm-detail-item">
                     <span className="sbm-detail-label">Customer:</span>

@@ -398,7 +398,7 @@ const Home = () => {
       </section>
       
       {/* Contact Section */}
-      <section className="home-contact-section">
+      {/* <section className="home-contact-section">
         <div className="home-section-container">
           <div className="home-contact-container">
             <div className="home-contact-info">
@@ -468,7 +468,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
       
       {/* Footer */}
       <footer className="home-footer">
