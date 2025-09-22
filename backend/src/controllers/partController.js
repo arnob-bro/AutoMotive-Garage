@@ -50,8 +50,12 @@ class PartController {
             return res.status(400).json({ error: "short description too long (max 255 chars)." });
         }
 
-        if (stock !== undefined && typeof stock !== "number") {
-            return res.status(400).json({ error: "Invalid stock. Must be a int." });
+        if (stock !== undefined) {
+          const stockNum = parseInt(stock);
+          if (isNaN(stockNum)) {
+            return res.status(400).json({ error: "Invalid stock. Must be a number." });
+          }
+          // Use stockNum for further processing
         }
         
 
@@ -142,10 +146,13 @@ class PartController {
               return res.status(400).json({ error: "short description too long (max 255 chars)." });
           }
   
-          if (stock !== undefined && typeof stock !== "number") {
-              return res.status(400).json({ error: "Invalid stock. Must be a int." });
+          if (stock !== undefined) {
+            const stockNum = parseInt(stock);
+            if (isNaN(stockNum)) {
+              return res.status(400).json({ error: "Invalid stock. Must be a number." });
+            }
+            // Use stockNum for further processing
           }
-
           const updatedPart = await this.partService.updatePart({
             part_id, 
             name, 

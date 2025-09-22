@@ -177,15 +177,45 @@ class AuthController {
     async updateProfile(req, res) {
       try {
         const user_id = req.user.user_id;
-        const role = req.user.role;
-        const {email,phone,birthday,anniversary,address}= req.body;
-        const user = await this.userService.updateProfile(user_id,role,email,phone,birthday,anniversary,address);
-        res.status(200).json({success: true, message: "Profile has been updated", user});
+        const { name, email, phone, address, vehicles } = req.body;
+        
+        // Basic validation
+        if (!name || !email) {
+          return res.status(400).json({ error: "Name and email are required" });
+        }
+        
+        const updatedUser = await this.userService.updateProfile(
+          user_id, 
+          req.user.role, 
+          name, 
+          email, 
+          phone, 
+          null,  // birthday
+          null,  // anniversary
+          address, 
+          vehicles || []  // Ensure vehicles is always an array
+        );
+        
+        res.status(200).json({ 
+          success: true, 
+          message: "Profile has been updated", 
+          user: updatedUser 
+        });
       } catch (err) {
         console.error("Error updating profile:", err);
-        res.status(500).json({ error: "Invalid request for updating profile"});
+        res.status(500).json({ 
+          success: false,
+          error: "Failed to update profile",
+          message: err.message 
+        });
       }
     }
+
+
+
+
+
+    
     
       
 }

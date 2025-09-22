@@ -3,13 +3,12 @@ import api from "./api";
 export default class AuthApi {
   constructor(baseURL = "http://localhost:5000") {
     this.authApi = api; 
-    this.baseURL = baseURL+"/auth";
+    this.baseURL = baseURL + "/auth";
   }
 
   async register(userData) {
     try {
       const response = await this.authApi.post(`${this.baseURL}/create-user`, userData);
-      console.log(response.data);
       return response.data;
     } catch (err) {
       throw err.response?.data || { error: "Registration failed" };
@@ -19,7 +18,6 @@ export default class AuthApi {
   async login(email, password) {
     try {
       const response = await this.authApi.post(`${this.baseURL}/login`, { email, password });
-      console.log(response.data);
       return response.data;
     } catch (err) {
       throw err.response?.data || { error: "Login failed" };
@@ -37,30 +35,42 @@ export default class AuthApi {
 
   async refresh() {
     try {
-      const response = await this.authApi.post(`${this.baseURL}/refresh`, { withCredentials: true });
+      const response = await this.authApi.post(`${this.baseURL}/refresh`, {}, { 
+        withCredentials: true 
+      });
       return response.data;
     } catch (err) {
-      throw err.response?.data || { error: "Logout failed" };
+      throw err.response?.data || { error: "Refresh failed" };
     }
   }
 
   async getProfile() {
     try {
-      const response = await this.authApi.get(`${this.baseURL}/profile`,{ withCredentials: true });
-      console.log(response.data);
+      const response = await this.authApi.get(`${this.baseURL}/profile`, { 
+        withCredentials: true 
+      });
       return response.data;
     } catch (err) {
       throw err.response?.data || { error: "Profile fetch failed" };
     }
   }
 
-  async updateProfile() {
+  async updateProfile(userData) {
     try {
-      const response = await this.authApi.post(`${this.baseURL}/update-profile`);
+      const response = await this.authApi.post(
+        `${this.baseURL}/update-profile`, 
+        userData,
+        { withCredentials: true }
+      );
       return response.data;
     } catch (err) {
-      throw err.response?.data || { error: "Profile fetch failed" };
+      throw err.response?.data || { error: "Profile update failed" };
     }
   }
 
+
+
+
+
+  
 }
