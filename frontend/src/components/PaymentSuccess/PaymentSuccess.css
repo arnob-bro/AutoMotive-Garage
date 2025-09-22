@@ -1,3 +1,5 @@
+/* PaymentSuccess.css */
+
 /* Base styles */
 /* body,
 html {
@@ -5,11 +7,6 @@ html {
   padding: 0;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
-  background-color: #f7fafc; /* Light Gray Background */
-/* display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh; 
 } */
 
 .bg-gray-100 {
@@ -103,9 +100,13 @@ html {
 .bg-indigo-600 {
   background-color: #4f46e5; /* Indigo */
   border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.hover\:bg-indigo-500:hover {
+.hover\:bg-indigo-500:hover,
+.bg-indigo-600:hover {
   background-color: #4338ca; /* Lighter Indigo */
 }
 
@@ -113,17 +114,42 @@ html {
   color: #ffffff;
 }
 
-.font-semibold {
-  font-weight: 600;
-}
-
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
 
-a {
+/* Button specific styles */
+button {
   text-decoration: none;
+  outline: none;
+  font-family: inherit;
+}
+
+button:focus {
+  outline: 2px solid #4338ca;
+  outline-offset: 2px;
+}
+
+/* Animation for smooth appearance */
+.bg-white {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* SVG icon styling */
+.text-green-600 svg {
+  display: block;
 }
 
 /* Responsive styles */
@@ -146,5 +172,36 @@ a {
   .h-16 {
     width: 3rem;
     height: 3rem;
+  }
+
+  .bg-white {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .p-6 {
+    padding: 1rem;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .bg-white {
+    animation: none;
+  }
+  
+  .bg-indigo-600 {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .bg-white {
+    border: 2px solid #000;
+  }
+  
+  .text-gray-600 {
+    color: #4a5568;
   }
 }

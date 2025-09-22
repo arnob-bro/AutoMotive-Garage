@@ -1,95 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FaShoppingCart, FaSearch, FaFilter, FaCalendarAlt, 
   FaTruck, FaCheckCircle, FaTimesCircle, 
-  FaEllipsisV, FaEye, FaEdit, FaFilePdf
+  FaEllipsisV, FaEye, FaEdit, FaFilePdf, FaSpinner
 } from 'react-icons/fa';
 import './OrderManagement.css';
+import OrderApi from '../../../apis/orderApi'; // Import the OrderApi
+
+const orderApi = new OrderApi();
 
 const OrderManagement = () => {
-  // Sample order data
-  const initialOrders = [
-    {
-      id: 'ORD-1001',
-      customer: 'John Smith',
-      address: 'House 12, Road 5, Dhanmondi, Dhaka 1205',
-      date: '2023-08-15',
-      items: [
-        { name: 'Premium Brake Pads', quantity: 2, price: 5999 },
-        { name: 'Performance Air Filter', quantity: 1, price: 3999 }
-      ],
-      amount: 15997,
-      tax: 1119.79,
-      net: 17116.79,
-      deliveryStatus: 'delivered',
-      paymentStatus: 'paid',
-      paymentMethod: 'sslcommerz'
-    },
-    {
-      id: 'ORD-1002',
-      customer: 'Sarah Johnson',
-      address: 'Flat A5, House 34, Gulshan 1, Dhaka 1212',
-      date: '2023-08-14',
-      items: [
-        { name: 'Synthetic Motor Oil 5W-30', quantity: 3, price: 3499 }
-      ],
-      amount: 10497,
-      tax: 734.79,
-      net: 11231.79,
-      deliveryStatus: 'shipped',
-      paymentStatus: 'paid',
-      paymentMethod: 'sslcommerz'
-    },
-    {
-      id: 'ORD-1003',
-      customer: 'Michael Brown',
-      address: 'Road 9/A, House 45, Banani, Dhaka 1213',
-      date: '2023-08-12',
-      items: [
-        { name: 'LED Headlight Bulbs', quantity: 1, price: 8999 },
-        { name: 'Car Battery', quantity: 1, price: 12999 }
-      ],
-      amount: 21998,
-      tax: 1539.86,
-      net: 23537.86,
-      deliveryStatus: 'processing',
-      paymentStatus: 'pending',
-      paymentMethod: 'cashondelivery'
-    },
-    {
-      id: 'ORD-1004',
-      customer: 'Emily Davis',
-      address: 'House 56, Road 11, Uttara, Dhaka 1230',
-      date: '2023-08-10',
-      items: [
-        { name: 'All-Season Tires', quantity: 4, price: 59999 }
-      ],
-      amount: 239996,
-      tax: 16799.72,
-      net: 256795.72,
-      deliveryStatus: 'cancelled',
-      paymentStatus: 'failed',
-      paymentMethod: 'sslcommerz'
-    },
-    {
-      id: 'ORD-1005',
-      customer: 'Robert Wilson',
-      address: 'Plot 15, Block C, Bashundhara R/A, Dhaka 1229',
-      date: '2023-08-08',
-      items: [
-        { name: 'Diagnostic Scanner', quantity: 1, price: 9999 },
-        { name: 'Car Cover', quantity: 1, price: 14999 }
-      ],
-      amount: 24998,
-      tax: 1749.86,
-      net: 26747.86,
-      deliveryStatus: 'delivered',
-      paymentStatus: 'paid',
-      paymentMethod: 'cashondelivery'
-    }
-  ];
-
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDeliveryStatus, setFilterDeliveryStatus] = useState('all');
   const [filterPaymentStatus, setFilterPaymentStatus] = useState('all');
@@ -99,27 +21,70 @@ const OrderManagement = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(null);
   const [revenueTimeframe, setRevenueTimeframe] = useState('total');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({});
 
   const deliveryStatusOptions = ['all', 'processing', 'shipped', 'delivered', 'cancelled'];
   const paymentStatusOptions = ['all', 'paid', 'pending', 'failed'];
   const dateOptions = ['all', 'today', 'week', 'month'];
 
-  // Filter orders based on search and filters
+  // Fetch orders from API
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await orderApi.getOrders({
+        page: currentPage,
+        limit: 10,
+        searchTerm: searchTerm,
+        status: filterDeliveryStatus !== 'all' ? filterDeliveryStatus : ''
+      });
+
+      if (response.success !== false) {
+        setOrders(response.data || []);
+        setPagination({
+          page: response.page,
+          limit: response.limit,
+          total: response.total,
+          totalPages: response.totalPages
+        });
+      } else {
+        console.error('Failed to fetch orders');
+        setOrders([]);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch orders on component mount and when filters change
+  useEffect(() => {
+    fetchOrders();
+  }, [currentPage, searchTerm, filterDeliveryStatus]);
+
+  // Debounce search
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setCurrentPage(1); // Reset to first page on search
+      fetchOrders();
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm]);
+
+  // Filter orders based on payment status and date (client-side filtering)
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.id.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                         order.customer.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesDeliveryStatus = filterDeliveryStatus === 'all' || order.deliveryStatus === filterDeliveryStatus;
-    const matchesPaymentStatus = filterPaymentStatus === 'all' || order.paymentStatus === filterPaymentStatus;
+    const matchesPaymentStatus = filterPaymentStatus === 'all' || order.payment_status === filterPaymentStatus;
     
     const now = new Date();
-    const orderDate = new Date(order.date);
+    const orderDate = new Date(order.created_at);
     const matchesDate = filterDate === 'all' ||
                       (filterDate === 'today' && orderDate.toDateString() === now.toDateString()) ||
                       (filterDate === 'week' && (now - orderDate) <= 7 * 24 * 60 * 60 * 1000) ||
                       (filterDate === 'month' && orderDate.getMonth() === now.getMonth() && orderDate.getFullYear() === now.getFullYear());
     
-    return matchesSearch && matchesDeliveryStatus && matchesPaymentStatus && matchesDate;
+    return matchesPaymentStatus && matchesDate;
   });
 
   // Get delivery status icon and color
@@ -134,7 +99,7 @@ const OrderManagement = () => {
       case 'cancelled':
         return { icon: <FaTimesCircle />, color: '#e74c3c', text: 'Cancelled' };
       default:
-        return { icon: null, color: '', text: '' };
+        return { icon: null, color: '#666', text: status || 'Unknown' };
     }
   };
 
@@ -148,7 +113,7 @@ const OrderManagement = () => {
       case 'failed':
         return { color: '#e74c3c', text: 'Failed' };
       default:
-        return { color: '', text: '' };
+        return { color: '#666', text: status || 'Unknown' };
     }
   };
 
@@ -165,12 +130,26 @@ const OrderManagement = () => {
     setIsActionMenuOpen(null);
   };
 
-  // Update delivery status
-  const updateDeliveryStatus = (orderId, newStatus) => {
-    setOrders(orders.map(order => 
-      order.id === orderId ? { ...order, deliveryStatus: newStatus } : order
-    ));
-    setIsEditModalOpen(false);
+  // Update delivery status using API
+  const updateDeliveryStatus = async (orderId, newStatus) => {
+    try {
+      const response = await orderApi.updateOrderStatus(orderId, newStatus);
+      if (response.success) {
+        // Update local state
+        setOrders(orders.map(order => 
+          order.order_id === orderId ? { ...order, status: newStatus } : order
+        ));
+        setIsEditModalOpen(false);
+        
+        // Show success message
+        alert(`Order status updated to ${newStatus}`);
+      } else {
+        alert('Failed to update order status');
+      }
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      alert('Failed to update order status');
+    }
   };
 
   // Toggle action menu
@@ -189,22 +168,33 @@ const OrderManagement = () => {
   // Calculate order summary stats
   const orderStats = {
     total: orders.length,
-    processing: orders.filter(o => o.deliveryStatus === 'processing').length,
-    shipped: orders.filter(o => o.deliveryStatus === 'shipped').length,
-    delivered: orders.filter(o => o.deliveryStatus === 'delivered').length,
-    cancelled: orders.filter(o => o.deliveryStatus === 'cancelled').length,
-    revenue: orders.filter(o => o.paymentStatus === 'paid').reduce((sum, order) => sum + order.net, 0),
+    processing: orders.filter(o => o.status === 'processing').length,
+    shipped: orders.filter(o => o.status === 'shipped').length,
+    delivered: orders.filter(o => o.status === 'delivered').length,
+    cancelled: orders.filter(o => o.status === 'cancelled').length,
+    revenue: orders.filter(o => o.payment_status === 'paid').reduce((sum, order) => sum + parseFloat(order.net_amount || 0), 0),
     todayRevenue: orders.filter(o => {
-      const orderDate = new Date(o.date);
+      const orderDate = new Date(o.created_at);
       const today = new Date();
-      return o.paymentStatus === 'paid' && orderDate.toDateString() === today.toDateString();
-    }).reduce((sum, order) => sum + order.net, 0)
+      return o.payment_status === 'paid' && orderDate.toDateString() === today.toDateString();
+    }).reduce((sum, order) => sum + parseFloat(order.net_amount || 0), 0)
   };
 
   // Download PDF
   const downloadPDF = () => {
     alert('PDF download functionality would be implemented here');
   };
+
+  if (loading) {
+    return (
+      <div className="om-order-management">
+        <div className="om-loading">
+          <FaSpinner className="om-spinner" />
+          <p>Loading orders...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="om-order-management">
@@ -322,72 +312,97 @@ const OrderManagement = () => {
 
       <div className="om-orders-table-container">
         {filteredOrders.length > 0 ? (
-          <table className="om-orders-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Date</th>
-                <th>Items</th>
-                <th>Amount (৳)</th>
-                <th>Tax (৳)</th>
-                <th>Net (৳)</th>
-                <th>Payment Method</th>
-                <th>Delivery Status</th>
-                <th>Payment Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredOrders.map(order => (
-                <tr key={order.id} onClick={() => openDetailModal(order)}>
-                  <td className="om-order-id">{order.id}</td>
-                  <td className="om-customer">{order.customer}</td>
-                  <td className="om-date">{new Date(order.date).toLocaleDateString()}</td>
-                  <td className="om-items">{order.items.length} item{order.items.length !== 1 ? 's' : ''}</td>
-                  <td className="om-amount">৳{order.amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                  <td className="om-tax">৳{order.tax.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                  <td className="om-net">৳{order.net.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-                  <td className="om-payment-method">
-                    <span className={`om-payment-method-badge ${order.paymentMethod}`}>
-                      {order.paymentMethod === 'sslcommerz' ? 'SSL Commerz' : 'Cash on Delivery'}
-                    </span>
-                  </td>
-                  <td className="om-delivery-status">
-                    <span className="om-status-badge" style={{ backgroundColor: getDeliveryStatusInfo(order.deliveryStatus).color }}>
-                      {getDeliveryStatusInfo(order.deliveryStatus).icon}
-                      {getDeliveryStatusInfo(order.deliveryStatus).text}
-                    </span>
-                  </td>
-                  <td className="om-payment-status">
-                    <span className="om-status-badge" style={{ backgroundColor: getPaymentStatusInfo(order.paymentStatus).color }}>
-                      {getPaymentStatusInfo(order.paymentStatus).text}
-                    </span>
-                  </td>
-                  <td className="om-actions" onClick={(e) => e.stopPropagation()}>
-                    <div className="om-action-menu">
-                      <button 
-                        className="om-menu-toggle" 
-                        onClick={(e) => toggleActionMenu(order.id, e)}
-                      >
-                        <FaEllipsisV />
-                      </button>
-                      {isActionMenuOpen === order.id && (
-                        <div className="om-menu-dropdown">
-                          <button onClick={() => openDetailModal(order)}>
-                            <FaEye /> View Details
-                          </button>
-                          <button onClick={() => openEditModal(order)}>
-                            <FaEdit /> Edit Status
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </td>
+          <>
+            <table className="om-orders-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Date</th>
+                  <th>Items</th>
+                  <th>Amount (৳)</th>
+                  <th>Tax (৳)</th>
+                  <th>Net (৳)</th>
+                  <th>Payment Method</th>
+                  <th>Delivery Status</th>
+                  <th>Payment Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredOrders.map(order => (
+                  <tr key={order.order_id} onClick={() => openDetailModal(order)}>
+                    <td className="om-order-id">{order.order_code}</td>
+                    <td className="om-customer">{order.customer_id}</td>
+                    <td className="om-date">{new Date(order.created_at).toLocaleDateString()}</td>
+                    <td className="om-items">{order.items ? order.items.length : 0} item{order.items && order.items.length !== 1 ? 's' : ''}</td>
+                    <td className="om-amount">৳{parseFloat(order.total_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td className="om-tax">৳{parseFloat(order.tax || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td className="om-net">৳{parseFloat(order.net_amount || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td className="om-payment-method">
+                      <span className={`om-payment-method-badge ${order.payment_method}`}>
+                        {order.payment_method === 'ssl' ? 'SSL Commerz' : 'Cash on Delivery'}
+                      </span>
+                    </td>
+                    <td className="om-delivery-status">
+                      <span className="om-status-badge" style={{ backgroundColor: getDeliveryStatusInfo(order.status).color }}>
+                        {getDeliveryStatusInfo(order.status).icon}
+                        {getDeliveryStatusInfo(order.status).text}
+                      </span>
+                    </td>
+                    <td className="om-payment-status">
+                      <span className="om-status-badge" style={{ backgroundColor: getPaymentStatusInfo(order.payment_status).color }}>
+                        {getPaymentStatusInfo(order.payment_status).text}
+                      </span>
+                    </td>
+                    <td className="om-actions" onClick={(e) => e.stopPropagation()}>
+                      <div className="om-action-menu">
+                        <button 
+                          className="om-menu-toggle" 
+                          onClick={(e) => toggleActionMenu(order.order_id, e)}
+                        >
+                          <FaEllipsisV />
+                        </button>
+                        {isActionMenuOpen === order.order_id && (
+                          <div className="om-menu-dropdown">
+                            <button onClick={() => openDetailModal(order)}>
+                              <FaEye /> View Details
+                            </button>
+                            <button onClick={() => openEditModal(order)}>
+                              <FaEdit /> Edit Status
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            
+            {/* Pagination */}
+            {pagination.totalPages > 1 && (
+              <div className="om-pagination">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="om-pagination-btn"
+                >
+                  Previous
+                </button>
+                <span className="om-pagination-info">
+                  Page {currentPage} of {pagination.totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
+                  disabled={currentPage === pagination.totalPages}
+                  className="om-pagination-btn"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="om-no-orders">
             <p>No orders found matching your criteria</p>
@@ -400,7 +415,7 @@ const OrderManagement = () => {
         <div className="om-modal-overlay" onClick={closeAll}>
           <div className="om-modal-container" onClick={(e) => e.stopPropagation()}>
             <div className="om-modal-header">
-              <h3>Order Details: {selectedOrder.id}</h3>
+              <h3>Order Details: {selectedOrder.order_code}</h3>
               <button className="om-close-modal" onClick={closeAll}>
                 ×
               </button>
@@ -408,37 +423,37 @@ const OrderManagement = () => {
             <div className="om-modal-body">
               <div className="om-order-info">
                 <div className="om-info-row">
-                  <span className="om-info-label">Customer:</span>
-                  <span className="om-info-value">{selectedOrder.customer}</span>
+                  <span className="om-info-label">Customer ID:</span>
+                  <span className="om-info-value">{selectedOrder.customer_id}</span>
                 </div>
                 <div className="om-info-row">
                   <span className="om-info-label">Address:</span>
-                  <span className="om-info-value">{selectedOrder.address}</span>
+                  <span className="om-info-value">{selectedOrder.delivery_address}</span>
                 </div>
                 <div className="om-info-row">
                   <span className="om-info-label">Order Date:</span>
-                  <span className="om-info-value">{new Date(selectedOrder.date).toLocaleDateString()}</span>
+                  <span className="om-info-value">{new Date(selectedOrder.created_at).toLocaleDateString()}</span>
                 </div>
                 <div className="om-info-row">
                   <span className="om-info-label">Delivery Status:</span>
                   <span className="om-info-value">
-                    <span className="om-status-badge" style={{ backgroundColor: getDeliveryStatusInfo(selectedOrder.deliveryStatus).color }}>
-                      {getDeliveryStatusInfo(selectedOrder.deliveryStatus).icon}
-                      {getDeliveryStatusInfo(selectedOrder.deliveryStatus).text}
+                    <span className="om-status-badge" style={{ backgroundColor: getDeliveryStatusInfo(selectedOrder.status).color }}>
+                      {getDeliveryStatusInfo(selectedOrder.status).icon}
+                      {getDeliveryStatusInfo(selectedOrder.status).text}
                     </span>
                   </span>
                 </div>
                 <div className="om-info-row">
                   <span className="om-info-label">Payment Method:</span>
                   <span className="om-info-value">
-                    {selectedOrder.paymentMethod === 'sslcommerz' ? 'SSL Commerz' : 'Cash on Delivery'}
+                    {selectedOrder.payment_method === 'ssl' ? 'SSL Commerz' : 'Cash on Delivery'}
                   </span>
                 </div>
                 <div className="om-info-row">
                   <span className="om-info-label">Payment Status:</span>
                   <span className="om-info-value">
-                    <span className="om-status-badge" style={{ backgroundColor: getPaymentStatusInfo(selectedOrder.paymentStatus).color }}>
-                      {getPaymentStatusInfo(selectedOrder.paymentStatus).text}
+                    <span className="om-status-badge" style={{ backgroundColor: getPaymentStatusInfo(selectedOrder.payment_status).color }}>
+                      {getPaymentStatusInfo(selectedOrder.payment_status).text}
                     </span>
                   </span>
                 </div>
@@ -446,40 +461,44 @@ const OrderManagement = () => {
 
               <div className="om-order-items">
                 <h4>Order Items</h4>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Item</th>
-                      <th>Quantity</th>
-                      <th>Price (৳)</th>
-                      <th>Subtotal (৳)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedOrder.items.map((item, index) => (
-                      <tr key={index}>
-                        <td>{item.name}</td>
-                        <td>{item.quantity}</td>
-                        <td>৳{(item.price / 100).toFixed(2)}</td>
-                        <td>৳{(item.price * item.quantity / 100).toFixed(2)}</td>
+                {selectedOrder.items && selectedOrder.items.length > 0 ? (
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Price (৳)</th>
+                        <th>Subtotal (৳)</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {selectedOrder.items.map((item, index) => (
+                        <tr key={index}>
+                          <td>{item.name || `Part ID: ${item.part_id}`}</td>
+                          <td>{item.quantity}</td>
+                          <td>৳{parseFloat(item.price_each || 0).toFixed(2)}</td>
+                          <td>৳{(parseFloat(item.price_each || 0) * item.quantity).toFixed(2)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p>No items found for this order.</p>
+                )}
               </div>
 
               <div className="om-order-summary">
                 <div className="om-summary-row">
                   <span>Subtotal:</span>
-                  <span>৳{(selectedOrder.amount / 100).toFixed(2)}</span>
+                  <span>৳{parseFloat(selectedOrder.total_amount || 0).toFixed(2)}</span>
                 </div>
                 <div className="om-summary-row">
-                  <span>Tax (7%):</span>
-                  <span>৳{(selectedOrder.tax / 100).toFixed(2)}</span>
+                  <span>Tax:</span>
+                  <span>৳{parseFloat(selectedOrder.tax || 0).toFixed(2)}</span>
                 </div>
                 <div className="om-summary-row om-total">
                   <span>Total:</span>
-                  <span>৳{(selectedOrder.net / 100).toFixed(2)}</span>
+                  <span>৳{parseFloat(selectedOrder.net_amount || 0).toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -500,7 +519,7 @@ const OrderManagement = () => {
         <div className="om-modal-overlay" onClick={closeAll}>
           <div className="om-modal-container om-edit-modal" onClick={(e) => e.stopPropagation()}>
             <div className="om-modal-header">
-              <h3>Update Delivery Status: {selectedOrder.id}</h3>
+              <h3>Update Delivery Status: {selectedOrder.order_code}</h3>
               <button className="om-close-modal" onClick={closeAll}>
                 ×
               </button>
@@ -508,9 +527,9 @@ const OrderManagement = () => {
             <div className="om-modal-body">
               <div className="om-current-status">
                 <span>Current Status:</span>
-                <span className="om-status-badge" style={{ backgroundColor: getDeliveryStatusInfo(selectedOrder.deliveryStatus).color }}>
-                  {getDeliveryStatusInfo(selectedOrder.deliveryStatus).icon}
-                  {getDeliveryStatusInfo(selectedOrder.deliveryStatus).text}
+                <span className="om-status-badge" style={{ backgroundColor: getDeliveryStatusInfo(selectedOrder.status).color }}>
+                  {getDeliveryStatusInfo(selectedOrder.status).icon}
+                  {getDeliveryStatusInfo(selectedOrder.status).text}
                 </span>
               </div>
 
@@ -518,29 +537,29 @@ const OrderManagement = () => {
                 <h4>Update Status To:</h4>
                 <div className="om-options-grid">
                   <button 
-                    className={`om-status-option ${selectedOrder.deliveryStatus === 'processing' ? 'om-active' : ''}`}
-                    onClick={() => updateDeliveryStatus(selectedOrder.id, 'processing')}
+                    className={`om-status-option ${selectedOrder.status === 'processing' ? 'om-active' : ''}`}
+                    onClick={() => updateDeliveryStatus(selectedOrder.order_id, 'processing')}
                   >
                     <span className="om-status-icon"><FaEllipsisV /></span>
                     Processing
                   </button>
                   <button 
-                    className={`om-status-option ${selectedOrder.deliveryStatus === 'shipped' ? 'om-active' : ''}`}
-                    onClick={() => updateDeliveryStatus(selectedOrder.id, 'shipped')}
+                    className={`om-status-option ${selectedOrder.status === 'shipped' ? 'om-active' : ''}`}
+                    onClick={() => updateDeliveryStatus(selectedOrder.order_id, 'shipped')}
                   >
                     <span className="om-status-icon"><FaTruck /></span>
                     Shipped
                   </button>
                   <button 
-                    className={`om-status-option ${selectedOrder.deliveryStatus === 'delivered' ? 'om-active' : ''}`}
-                    onClick={() => updateDeliveryStatus(selectedOrder.id, 'delivered')}
+                    className={`om-status-option ${selectedOrder.status === 'delivered' ? 'om-active' : ''}`}
+                    onClick={() => updateDeliveryStatus(selectedOrder.order_id, 'delivered')}
                   >
                     <span className="om-status-icon"><FaCheckCircle /></span>
                     Delivered
                   </button>
                   <button 
-                    className={`om-status-option ${selectedOrder.deliveryStatus === 'cancelled' ? 'om-active' : ''}`}
-                    onClick={() => updateDeliveryStatus(selectedOrder.id, 'cancelled')}
+                    className={`om-status-option ${selectedOrder.status === 'cancelled' ? 'om-active' : ''}`}
+                    onClick={() => updateDeliveryStatus(selectedOrder.order_id, 'cancelled')}
                   >
                     <span className="om-status-icon"><FaTimesCircle /></span>
                     Cancelled

@@ -21,22 +21,30 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   // Fetch user data from API
   const fetchUser = async () => {
     setLoading(true);
     setError("");
     try {
-      const response = await authApi.getProfile(); // expects something like { success: true, user: { ... } }
-      // Support both response.user and direct user return
-      const user = response?.user ?? response;
+      const response = await authApi.getProfile();
+      
+      // Adjust for backend response structure
+      const user = response?.user || response;
       if (!user) throw new Error("Invalid profile response");
-      setUserData(user);
-      // deep clone so edits don't mutate original state
-      setEditedUserData(JSON.parse(JSON.stringify(user)));
+      
+      // Ensure vehicles is always an array
+      const userWithVehicles = {
+        ...user,
+        vehicles: Array.isArray(user.vehicles) ? user.vehicles : []
+      };
+      
+      setUserData(userWithVehicles);
+      setEditedUserData(JSON.parse(JSON.stringify(userWithVehicles)));
     } catch (err) {
       console.error("Failed to fetch user data:", err);
-      setError("Failed to fetch user data");
+      setError(err.message || "Failed to fetch user data");
     } finally {
       setLoading(false);
     }
@@ -47,16 +55,17 @@ const Profile = () => {
   }, []);
 
   const handleEdit = () => {
-    // deep clone to avoid mutating userData directly
     setEditedUserData(JSON.parse(JSON.stringify(userData || {})));
     setIsEditing(true);
+    setError("");
+    setSuccess("");
   };
 
   const handleCancel = () => {
-    // discard edits
     setEditedUserData(JSON.parse(JSON.stringify(userData || {})));
     setIsEditing(false);
     setError("");
+    setSuccess("");
   };
 
   const handleChange = (e) => {
@@ -70,6 +79,9 @@ const Profile = () => {
   const handleVehicleChange = (index, field, value) => {
     setEditedUserData((prev) => {
       const vehicles = Array.isArray(prev?.vehicles) ? [...prev.vehicles] : [];
+      if (!vehicles[index]) {
+        vehicles[index] = { vehicle_id: null, brand: "", model: "", year: "" };
+      }
       vehicles[index] = { ...vehicles[index], [field]: value };
       return { ...prev, vehicles };
     });
@@ -91,54 +103,53 @@ const Profile = () => {
     });
   };
 
-  const handleSave = async () => {
-    setError("");
-    if (!editedUserData) return;
+// In your handleSave function
+const handleSave = async () => {
+  setError("");
+  setSuccess("");
+  
+  try {
+    const payload = {
+      name: editedUserData.name,
+      email: editedUserData.email,
+      phone: editedUserData.phone || "",
+      address: editedUserData.address || "",
+      vehicles: (editedUserData.vehicles || []).map((v) => ({
+        vehicle_id: v.vehicle_id || null,
+        brand: v.brand,
+        model: v.model,
+        year: v.year ? v.year.toString() : "" // Ensure year is string
+      }))
+    };
 
-    try {
-      // Build payload: ensure vehicles array exists and contains only expected fields
-      const payload = {
-        ...editedUserData,
-        vehicles: (editedUserData.vehicles || []).map((v) => ({
-          vehicle_id: v.vehicle_id ?? null,
-          brand: (v.brand ?? "").trim(),
-          model: (v.model ?? "").trim(),
-          year: (v.year ?? "").trim()
-        }))
-      };
-
-      const response = await authApi.updateProfile(payload);
-      // Accept both { success: true } and truthy responses
-      const ok = response?.success ?? true;
-
-      if (ok) {
-        // Re-fetch latest user from server to get any assigned ids or normalized data
-        await fetchUser();
-        setIsEditing(false);
-      } else {
-        console.error("Update profile failed:", response);
-        setError(response?.message ?? "Failed to update profile");
-      }
-    } catch (err) {
-      console.error("Failed to save user data:", err);
-      setError(err?.message ?? "Failed to save user data");
+    console.log("Payload being sent:", payload);
+    const response = await authApi.updateProfile(payload);
+    
+    if (response.success) {
+      setSuccess("Profile updated successfully!");
+      await fetchUser();
+      setIsEditing(false);
+    } else {
+      setError(response.message || "Failed to update profile");
     }
-  };
+  } catch (err) {
+    console.error("Failed to save user data:", err);
+    setError(err.response?.data?.error || err.message || "Failed to save user data");
+  }
+};
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const options = {
       year: "numeric",
       month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit"
+      day: "numeric"
     };
     return new Date(dateString).toLocaleString(undefined, options);
   };
 
-  if (loading) return <p>Loading user data...</p>;
-  if (!userData) return <p>User data not found</p>;
+  if (loading) return <div className="auto-loading">Loading user data...</div>;
+  if (!userData) return <div className="auto-error">User data not found</div>;
 
   return (
     <div className="auto-profile-container">
@@ -162,6 +173,7 @@ const Profile = () => {
       </div>
 
       {error && <div className="auto-error">{error}</div>}
+      {success && <div className="auto-success">{success}</div>}
 
       <div className="auto-profile-content">
         <div className="auto-profile-details">
@@ -171,9 +183,10 @@ const Profile = () => {
               <input
                 type="text"
                 name="name"
-                value={editedUserData?.name ?? ""}
+                value={editedUserData?.name || ""}
                 onChange={handleChange}
                 className="auto-edit-input"
+                required
               />
             ) : (
               <p className="auto-detail-text">{userData.name}</p>
@@ -185,9 +198,10 @@ const Profile = () => {
               <input
                 type="email"
                 name="email"
-                value={editedUserData?.email ?? ""}
+                value={editedUserData?.email || ""}
                 onChange={handleChange}
                 className="auto-edit-input"
+                required
               />
             ) : (
               <p className="auto-detail-text">{userData.email}</p>
@@ -199,12 +213,13 @@ const Profile = () => {
               <input
                 type="tel"
                 name="phone"
-                value={editedUserData?.phone ?? ""}
+                value={editedUserData?.phone || ""}
                 onChange={handleChange}
                 className="auto-edit-input"
+                placeholder="Enter phone number"
               />
             ) : (
-              <p className="auto-detail-text">{userData.phone || "not given yet"}</p>
+              <p className="auto-detail-text">{userData.phone || "Not provided"}</p>
             )}
           </div>
           <div className="auto-detail-item">
@@ -217,17 +232,18 @@ const Profile = () => {
               <input
                 type="text"
                 name="address"
-                value={editedUserData?.address ?? ""}
+                value={editedUserData?.address || ""}
                 onChange={handleChange}
                 className="auto-edit-input"
+                placeholder="Enter your address"
               />
             ) : (
-              <p className="auto-detail-text">{userData.address || "not given yet"}</p>
+              <p className="auto-detail-text">{userData.address || "Not provided"}</p>
             )}
           </div>
         </div>
 
-        {/* Vehicles */}
+        {/* Vehicles Section */}
         <div className="auto-profile-vehicles">
           <div className="auto-vehicles-header">
             <h3>Your Vehicles</h3>
@@ -242,12 +258,12 @@ const Profile = () => {
             (editedUserData?.vehicles?.length > 0) ? (
               <div className="auto-vehicles-list">
                 {editedUserData.vehicles.map((vehicle, idx) => (
-                  <div key={vehicle.vehicle_id ?? idx} className="auto-vehicle-card">
+                  <div key={idx} className="auto-vehicle-card editing">
                     <div className="auto-vehicle-edit-field">
                       <label>Brand</label>
                       <input
                         type="text"
-                        value={vehicle.brand ?? ""}
+                        value={vehicle.brand || ""}
                         onChange={(e) => handleVehicleChange(idx, 'brand', e.target.value)}
                         className="auto-edit-input"
                         placeholder="e.g. Toyota"
@@ -257,7 +273,7 @@ const Profile = () => {
                       <label>Model</label>
                       <input
                         type="text"
-                        value={vehicle.model ?? ""}
+                        value={vehicle.model || ""}
                         onChange={(e) => handleVehicleChange(idx, 'model', e.target.value)}
                         className="auto-edit-input"
                         placeholder="e.g. Corolla"
@@ -267,7 +283,7 @@ const Profile = () => {
                       <label>Year</label>
                       <input
                         type="text"
-                        value={vehicle.year ?? ""}
+                        value={vehicle.year || ""}
                         onChange={(e) => handleVehicleChange(idx, 'year', e.target.value)}
                         className="auto-edit-input"
                         placeholder="e.g. 2020"
@@ -287,13 +303,13 @@ const Profile = () => {
                 ))}
               </div>
             ) : (
-              <p>No vehicles added yet</p>
+              <p className="auto-no-vehicles">No vehicles added yet</p>
             )
           ) : (
             (userData?.vehicles?.length > 0) ? (
               <div className="auto-vehicles-list">
-                {userData.vehicles.map(vehicle => (
-                  <div key={vehicle.vehicle_id} className="auto-vehicle-card">
+                {userData.vehicles.map((vehicle, index) => (
+                  <div key={index} className="auto-vehicle-card">
                     <div className="auto-vehicle-make">{vehicle.brand}</div>
                     <div className="auto-vehicle-model">{vehicle.model}</div>
                     <div className="auto-vehicle-year">{vehicle.year}</div>
@@ -302,7 +318,7 @@ const Profile = () => {
                 ))}
               </div>
             ) : (
-              <p>You haven't added any vehicles yet</p>
+              <p className="auto-no-vehicles">You haven't added any vehicles yet</p>
             )
           )}
         </div>

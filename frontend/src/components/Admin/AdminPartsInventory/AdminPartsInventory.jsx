@@ -292,7 +292,7 @@ const AdminPartsInventory = () => {
         </button>
       </div>
 
-      <div className="apm-inventory-stats">
+      {/* <div className="apm-inventory-stats">
         <div className="apm-stat-card">
           <div className="apm-stat-icon apm-total">
             <FaBoxes />
@@ -322,7 +322,7 @@ const AdminPartsInventory = () => {
             <p>Total Inventory Value</p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="apm-table-container">
         {parts.length > 0 ? (

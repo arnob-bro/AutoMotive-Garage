@@ -9,7 +9,8 @@ function createAuthRouter(authController) {
   router.post("/logout", authController.logout);
   router.post("/refresh", authController.refresh);
   router.get("/profile", verifyAccessToken, authController.getProfile);
-  router.put("/update-profile", authController.updateProfile);
+  // Change from put to post for update-profile
+router.post("/update-profile", verifyAccessToken, authController.updateProfile);
 
   return router;
 }

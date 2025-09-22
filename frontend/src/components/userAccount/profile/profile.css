@@ -305,3 +305,31 @@
     width: 100%;
   }
 }
+
+
+/* Add to your profile.css */
+.auto-success {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+}
+
+.auto-loading {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
+}
+
+.auto-no-vehicles {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 20px;
+}
+
+.auto-vehicle-card.editing {
+  background-color: #f8f9fa;
+  border: 1px dashed #ccc;
+}
