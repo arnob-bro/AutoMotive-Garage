@@ -86,6 +86,36 @@ class BookingService {
           }
       
           await client.query("COMMIT");
+
+          
+          
+      
+          // Get customer_id
+          const result2 = await this.db.query(
+            "SELECT customer_id FROM bookings WHERE booking_id = $1",
+            [booking.booking_id]
+          );
+          const customer_id = result2.rows[0].customer_id;
+      
+          // Get customer email
+          const result3 = await this.db.query(
+            "SELECT email FROM users WHERE user_id = $1",
+            [customer_id]
+          );
+          const email = result3.rows[0]?.email;
+      
+          // Send email
+          await this.transporter.sendMail({
+            from: `"AutoMotive Garage BD" <${process.env.EMAIL_USER}>`,
+            to: email,
+            subject: `New booking has been made`,
+            html: `
+              <h2>Dear Customer,</h2>
+              <p>Your request for booking <b>#${booking.booking_code}</b> has been enlised.</p>
+              <p>Thank you for choosing AutoMotive Garage BD 🚗</p>
+            `
+          });
+
       
           return booking;
         } catch (error) {
