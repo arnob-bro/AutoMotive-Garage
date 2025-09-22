@@ -1,9 +1,20 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import "./PaymentSuccess.css"; // Make sure to import your CSS file
+import React, { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import './PaymentSuccess.css';
 
 const PaymentSuccess = () => {
-  const { tranId } = useParams();
+  const navigate = useNavigate();
+  const { order_id } = useParams();
+
+  useEffect(() => {
+    // Clear cart since payment was successful
+    localStorage.removeItem('cart');
+  }, []);
+
+  const handleContinueShopping = () => {
+    navigate('/parts');
+  };
+
   return (
     <div className="bg-gray-100 h-screen">
       <div className="bg-white p-6 md:mx-auto">
@@ -23,14 +34,17 @@ const PaymentSuccess = () => {
           <p className="text-gray-600 my-2">
             Thank you for completing your secure online payment.
           </p>
-          <p> Have a great day! </p>
+          <p className="text-gray-600 my-2">
+            Order ID: <strong>{order_id}</strong>
+          </p>
+          <p className="text-gray-600 my-2">Have a great day!</p>
           <div className="py-10 text-center">
-            <a
-              href="/"
+            <button
+              onClick={handleContinueShopping}
               className="px-12 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3"
             >
-              GO BACK
-            </a>
+              CONTINUE SHOPPING
+            </button>
           </div>
         </div>
       </div>

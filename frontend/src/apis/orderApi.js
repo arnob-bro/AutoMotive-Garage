@@ -1,33 +1,15 @@
-import api from "./api"; // adjust path
+import api from "./api";
 
 export default class OrderApi {
   constructor(baseURL = "http://localhost:5000") {
-    this.orderApi = api; // reuse existing axios instance
+    this.orderApi = api;
     this.baseURL = baseURL + "/order";
   }
 
   // Create new order
-  async createOrder({ 
-    customer_id,
-    delivery_address,
-    items,
-    total_amount,
-    tax,
-    net_amount,
-    payment_status,
-    payment_method
-  }) {
+  async createOrder(orderData) {
     try {
-      const response = await this.orderApi.post(`${this.baseURL}/create`, {
-        customer_id,
-        delivery_address,
-        items,
-        total_amount,
-        tax,
-        net_amount,
-        payment_status,
-        payment_method
-      });
+      const response = await this.orderApi.post(`${this.baseURL}/create`, orderData);
       return response.data;
     } catch (err) {
       throw err.response?.data || { error: "Failed to create order" };
@@ -50,6 +32,16 @@ export default class OrderApi {
     }
   }
 
+  // Get single order by ID
+  async getOrderById(orderId) {
+    try {
+      const response = await this.orderApi.get(`${this.baseURL}/${orderId}`);
+      return response.data;
+    } catch (err) {
+      throw err.response?.data || { error: "Failed to fetch order" };
+    }
+  }
+
   // Update order status
   async updateOrderStatus(order_id, status) {
     try {
@@ -59,6 +51,18 @@ export default class OrderApi {
       return response.data;
     } catch (err) {
       throw err.response?.data || { error: "Failed to update order status" };
+    }
+  }
+
+  // Update payment status
+  async updatePaymentStatus(order_id, payment_status) {
+    try {
+      const response = await this.orderApi.put(`${this.baseURL}/payment/${order_id}`, {
+        payment_status,
+      });
+      return response.data;
+    } catch (err) {
+      throw err.response?.data || { error: "Failed to update payment status" };
     }
   }
 }

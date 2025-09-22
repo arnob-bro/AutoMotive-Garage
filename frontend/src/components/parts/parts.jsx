@@ -37,13 +37,13 @@ const Parts = () => {
         setTotalPages(response.pagination?.totalPages);
       } 
     } catch (err) {
-      console.error('Error fetching services:', err);
+      console.error('Error fetching parts:', err);
     } 
   };
+
   useEffect(() => {
     fetchParts();
-  }, [selectedCategory,page]);
-
+  }, [selectedCategory, page]);
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
@@ -57,24 +57,48 @@ const Parts = () => {
   }, [cart]);
 
   const addToCart = (part) => {
-    const existingItem = cart.find(item => item.id === part.id);
+    // Ensure we use part_id for consistency with backend
+    const partWithCorrectId = {
+      ...part,
+      id: part.part_id, // Keep id for frontend compatibility
+      part_id: part.part_id // Ensure part_id exists for backend
+    };
+
+    const existingItem = cart.find(item => (item.part_id || item.id) === part.part_id);
     if (existingItem) {
       setCart(cart.map(item => 
-        item.id === part.id ? { ...item, quantity: item.quantity + 1 } : item
+        (item.part_id || item.id) === part.part_id ? { ...item, quantity: item.quantity + 1 } : item
       ));
     } else {
-      setCart([...cart, { ...part, quantity: 1 }]);
+      setCart([...cart, { ...partWithCorrectId, quantity: 1 }]);
     }
+
+    // Show success message
+    const message = document.createElement('div');
+    message.textContent = `${part.name} added to cart!`;
+    message.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #2ecc71;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      z-index: 10000;
+      animation: slideIn 0.3s ease;
+    `;
+    document.body.appendChild(message);
+    setTimeout(() => document.body.removeChild(message), 2000);
   };
 
   const removeFromCart = (partId) => {
-    setCart(cart.filter(item => item.id !== partId));
+    setCart(cart.filter(item => (item.part_id || item.id) !== partId));
   };
 
   const updateQuantity = (partId, newQuantity) => {
     if (newQuantity < 1) return;
     setCart(cart.map(item => 
-      item.id === partId ? { ...item, quantity: newQuantity } : item
+      (item.part_id || item.id) === partId ? { ...item, quantity: newQuantity } : item
     ));
   };
 
@@ -84,11 +108,14 @@ const Parts = () => {
   };
 
   const proceedToCheckout = () => {
+    if (cart.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
     navigate('/checkout');
   };
 
   const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
 
   return (
     <div className="partsPage">
@@ -105,8 +132,6 @@ const Parts = () => {
       </div>
 
       <div className="partsPage-controls">
-        
-
         <div className="partsPage-category-filter-container">
           <label>Category:</label>
           <div className="partsPage-category-filter">
@@ -115,7 +140,7 @@ const Parts = () => {
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
               {categories.map(category => (
-                <option key={category} value={category}>{category===""? "All" : category}</option>
+                <option key={category} value={category}>{category === "" ? "All" : category}</option>
               ))}
             </select>
           </div>
@@ -159,60 +184,58 @@ const Parts = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-                <div className="pagination">
-                {/* Previous */}
-                <button
-                  onClick={() => setPage(prev => Math.max(prev - 1, 1))}
-                  disabled={page === 1}
-                  className="pagination-btn"
-                >
-                  <FiChevronLeft /> Previous
-                </button>
-              
-                {/* Page numbers with ellipsis */}
-                {(() => {
-                  const pages = [];
-                  const delta = 1; // show ±1 around current
-              
-                  for (let i = 1; i <= totalPages; i++) {
-                    if (
-                      i === 1 || 
-                      i === totalPages || 
-                      (i >= page - delta && i <= page + delta)
-                    ) {
-                      pages.push(i);
-                    } else if (pages[pages.length - 1] !== '...') {
-                      pages.push('...');
-                    }
-                  }
-              
-                  return pages.map((page, idx) =>
-                    page === '...' ? (
-                      <span key={idx} className="pagination-ellipsis">…</span>
-                    ) : (
-                      <button
-                        key={idx}
-                        onClick={() => setPage(page)}
-                        className={page === page ? 'active' : ''}
-                      >
-                        {page}
-                      </button>
-                    )
-                  );
-                })()}
-              
-                {/* Next */}
-                <button
-                  onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
-                  disabled={page === totalPages}
-                  className="pagination-btn"
-                >
-                  Next <FiChevronRight />
-                </button>
-              </div>
+          <div className="pagination">
+            {/* Previous */}
+            <button
+              onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+              disabled={page === 1}
+              className="pagination-btn"
+            >
+              <FiChevronLeft /> Previous
+            </button>
           
+            {/* Page numbers with ellipsis */}
+            {(() => {
+              const pages = [];
+              const delta = 1; // show ±1 around current
+
+              for (let i = 1; i <= totalPages; i++) {
+                if (
+                  i === 1 || 
+                  i === totalPages || 
+                  (i >= page - delta && i <= page + delta)
+                ) {
+                  pages.push(i);
+                } else if (pages[pages.length - 1] !== '...') {
+                  pages.push('...');
+                }
+              }
+
+              return pages.map((pageNum, idx) =>
+                pageNum === '...' ? (
+                  <span key={idx} className="pagination-ellipsis">…</span>
+                ) : (
+                  <button
+                    key={idx}
+                    onClick={() => setPage(pageNum)}
+                    className={pageNum === page ? 'active' : ''}
+                  >
+                    {pageNum}
+                  </button>
+                )
+              );
+            })()}
           
-          )}
+            {/* Next */}
+            <button
+              onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={page === totalPages}
+              className="pagination-btn"
+            >
+              Next <FiChevronRight />
+            </button>
+          </div>
+        )}
       </div>
 
       <div className={`partsPage-cart-sidebar ${showCart ? 'active' : ''}`}>
@@ -228,7 +251,7 @@ const Parts = () => {
         <div className="partsPage-cart-items">
           {cart.length > 0 ? (
             cart.map(item => (
-              <div key={item.id} className="partsPage-cart-item">
+              <div key={item.part_id || item.id} className="partsPage-cart-item">
                 <div className="partsPage-item-image">
                   <img 
                     src={item.image} 
@@ -242,14 +265,14 @@ const Parts = () => {
                   <span className="partsPage-item-name">{item.name}</span>
                   <span className="partsPage-item-price">৳{item.price.toLocaleString()}</span>
                   <div className="partsPage-quantity-controls">
-                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                    <button onClick={() => updateQuantity(item.part_id || item.id, item.quantity - 1)}>-</button>
                     <span>{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                    <button onClick={() => updateQuantity(item.part_id || item.id, item.quantity + 1)}>+</button>
                   </div>
                 </div>
                 <button 
                   className="partsPage-remove-item"
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => removeFromCart(item.part_id || item.id)}
                 >
                   ×
                 </button>

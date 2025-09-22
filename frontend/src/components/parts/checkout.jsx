@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './checkout.css';
 import useUserStore from '../../stores/userStore';
+import OrderApi from '../../apis/orderApi'; // Import the OrderApi
+
+const orderApi = new OrderApi();
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const {user} = useUserStore();
+  const { user } = useUserStore();
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem('cart')) || []);
   const [formData, setFormData] = useState({
     name: '',
@@ -18,6 +21,7 @@ const Checkout = () => {
     paymentMethod: 'ssl'
   });
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const tax = totalPrice * 0.05; // 5% VAT
@@ -32,18 +36,65 @@ const Checkout = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // In a real app, you would process payment here
-    console.log('Order submitted:', { ...formData, cart, total: grandTotal });
-    
-    // Clear cart and show success message
-    localStorage.removeItem('cart');
-    setOrderSuccess(true);
+    setLoading(true);
+
+    try {
+      // Prepare delivery address
+      const deliveryAddress = `${formData.address}, ${formData.city}, ${formData.district} - ${formData.zipCode}`;
+      
+      // Prepare order items for API
+      const orderItems = cart.map(item => ({
+        part_id: item.part_id || item.id, // Use part_id if available, fallback to id
+        quantity: item.quantity,
+        price_each: item.price
+      }));
+
+      // Create order data
+      const orderData = {
+        customer_id: user?.user_id || user?.id, // Get customer ID from user store
+        delivery_address: deliveryAddress,
+        items: orderItems,
+        total_amount: totalPrice,
+        tax: tax,
+        net_amount: grandTotal,
+        payment_status: formData.paymentMethod === 'cod' ? 'pending' : 'pending',
+        payment_method: formData.paymentMethod
+      };
+
+      console.log('Submitting order:', orderData);
+
+      // Call the API
+      const response = await orderApi.createOrder(orderData);
+      
+      if (response.success || response.order) {
+        // Clear cart on successful order
+        localStorage.removeItem('cart');
+        setCart([]);
+        
+        // Handle SSL Commerz payment
+        if (formData.paymentMethod === 'ssl' && response.url) {
+          // Redirect to SSL payment gateway
+          window.location.href = response.url;
+        } else {
+          // Show success for COD orders
+          setOrderSuccess(true);
+        }
+      } else {
+        throw new Error('Order creation failed');
+      }
+
+    } catch (error) {
+      console.error('Order submission error:', error);
+      alert('Failed to place order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const removeFromCart = (partId) => {
-    const updatedCart = cart.filter(item => item.id !== partId);
+    const updatedCart = cart.filter(item => (item.part_id || item.id) !== partId);
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
   };
@@ -51,11 +102,26 @@ const Checkout = () => {
   const updateQuantity = (partId, newQuantity) => {
     if (newQuantity < 1) return;
     const updatedCart = cart.map(item => 
-      item.id === partId ? { ...item, quantity: newQuantity } : item
+      (item.part_id || item.id) === partId ? { ...item, quantity: newQuantity } : item
     );
     setCart(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
   };
+
+  // Early return for empty cart
+  if (cart.length === 0 && !orderSuccess) {
+    return (
+      <div className="checkout-page">
+        <div className="empty-cart-message">
+          <h2>Your cart is empty</h2>
+          <p>Add some items to your cart before proceeding to checkout.</p>
+          <button onClick={() => navigate('/parts')} className="back-to-shop">
+            Shop Now
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (orderSuccess) {
     return (
@@ -209,8 +275,8 @@ const Checkout = () => {
               </label>
             </div>
 
-            <button type="submit" className="place-order-btn">
-              Place Order
+            <button type="submit" className="place-order-btn" disabled={loading}>
+              {loading ? 'Processing...' : 'Place Order'}
             </button>
           </form>
         </div>
@@ -219,7 +285,7 @@ const Checkout = () => {
           <h2>Your Order</h2>
           <div className="order-items">
             {cart.map(item => (
-              <div key={item.id} className="order-item">
+              <div key={item.part_id || item.id} className="order-item">
                 <div className="item-image">
                   <img src={item.image} alt={item.name} />
                 </div>
@@ -227,15 +293,15 @@ const Checkout = () => {
                   <span className="item-name">{item.name}</span>
                   <span className="item-quantity">{item.quantity} × ৳{item.price.toLocaleString()}</span>
                   <div className="quantity-controls">
-                    <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                    <button onClick={() => updateQuantity(item.part_id || item.id, item.quantity - 1)}>-</button>
                     <span>{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
+                    <button onClick={() => updateQuantity(item.part_id || item.id, item.quantity + 1)}>+</button>
                   </div>
                 </div>
                 <span className="item-total">৳{(item.price * item.quantity).toLocaleString()}</span>
                 <button 
                   className="remove-item"
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => removeFromCart(item.part_id || item.id)}
                 >
                   ×
                 </button>
