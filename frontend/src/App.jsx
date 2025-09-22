@@ -27,7 +27,8 @@ import ContactSupport from './components/Admin/ContactSupport/ContactSupport';
 import FAQManagement from './components/Admin/ManageContents/FAQManagement/FAQManagement';
 import EducationalArticleManagement from './components/Admin/ManageContents/EducationalArticleManagement/EducationalArticleManagement';
 import PromotionalContentManagement from './components/Admin/ManageContents/PromotionalContentManagement/PromotionalContentManagement';
-
+import PaymentSuccess from './components/PaymentSuccess/PaymentSuccess';
+import OrderTest from './components/test';
 
 function App() {
   return (
@@ -36,6 +37,8 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
+          
+          <Route path="/test" element={<OrderTest />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/services" element={<Services />} />
@@ -45,6 +48,10 @@ function App() {
           <Route path="/contact" element={<ContactPage/>} />
           <Route path="/notifications" element={<NotificationPage/>} />
           <Route path="/account/*" element={<MyAccount />} />
+          <Route
+          path="/order/payment/success/:order_id"
+          element={<PaymentSuccess />}
+        />
           <Route path="/admin/*" element={<AdminPage />}>
             <Route index element={<Dashboard />} />
             <Route path="dashboard" element={<Dashboard />} />
